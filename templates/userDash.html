@@ -13,6 +13,19 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h1>Success</h1>
+    <form name = "admin" action = "{{ url_for('email') }}" method = 'post'>
+        Send to <input type = "text" name = "reciever">
+        <br><br>
+        Subject <input type = "text" name = "subject">
+        <br><br>
+        Message <input type = "text" name = "message">
+        <center>   <input type="submit" value = 'send' class="btn btn-primary btn-lg"></center>
+                
+            </form>
+        <br>
+            <a href="{{ url_for('SendMail') }}">Send mails</a>
+        <br>
+        <a href="{{ url_for('RecievedMail') }}">Recieved mails</a>
+       
 </body>
 </html>

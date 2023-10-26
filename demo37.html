@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+                <html>
+                <head>
+                <meta content = "text/html; charset = UTF-8"
+                http-equip = "content-type">
+                <style>
+                td {
+                    padding :0 15px;
+                }
+                </style>
+                <title>Time Table</title>
+                </head>
+                <body>
+                    <div class="card" id="generatePDF">
+
+                <br><br>
+                <center>
+                <table border = 1>
+                ['<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td></tr>', ['<tr><td>harshitaneelisetty@gmail.com</td>', '<td>HI HARSHITA </td>', '<td>HOW ARE YOU </td>', '<td>meena@gmail.com</td></tr>']]
+                </table>
+                <br><br>
+                
+                <button id="pdfButton"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxA1IZaV_fN96xiySAwgY5iZiM-pIg9W9ig&usqp=CAU" style="height:30px;width:30px;"><b style="padding-bottom:5px;" class="text"> <center>&nbsp; &nbsp Download</center></b></button>
+    
+    </div>
+    </center>
+        <script>
+        var button = document.getElementById("pdfButton");
+        var makepdf = document.getElementById("generatePDF");
+        button.addEventListener("click", function () {
+            var mywindow = window.open("", "PRINT", "height=600,width=600");
+            mywindow.document.write(makepdf.innerHTML);
+            mywindow.document.close();
+            mywindow.focus();
+            mywindow.print();
+            return true;
+        });
+    </script>
+
+                </body>
+                </html>
+                
