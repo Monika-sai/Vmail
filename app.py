@@ -249,7 +249,7 @@ def SendMail():
         actualTxt.append(txt)
     
     answer = []
-    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td></tr>"
+    tbl = "<tr><td>From</td><td>Subject</td><td>Text</td><td>To</td></tr>"
     answer1 = [0] * (len(text) + 1)
     answer1[0] = tbl
     for i in range(len(text)):
