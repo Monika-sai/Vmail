@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import mysql.connector as c1234
 import random
 import webbrowser
 import random
+import language_tool_python  
 
 app = Flask(__name__)
 
@@ -10,6 +11,31 @@ class Global:
     c = ""
 
 g = Global()
+
+
+def grammarCorrection(text):
+    my_tool = language_tool_python.LanguageTool('en-US')  
+    my_text = text
+    my_matches = my_tool.check(my_text)  
+    myMistakes = []  
+    myCorrections = []  
+    startPositions = []  
+    endPositions = []  
+    for rules in my_matches:  
+        if len(rules.replacements) > 0:  
+            startPositions.append(rules.offset)  
+            endPositions.append(rules.errorLength + rules.offset)  
+            myMistakes.append(my_text[rules.offset : rules.errorLength + rules.offset])  
+            myCorrections.append(rules.replacements[0])  
+    my_NewText = list(my_text)   
+    for n in range(len(startPositions)):  
+        for i in range(len(my_text)):  
+            my_NewText[startPositions[n]] = myCorrections[n]  
+            if (i > startPositions[n] and i < endPositions[n]):  
+                my_NewText[i] = ""  
+    
+    my_NewText = "".join(my_NewText)  
+    return my_NewText
 
 @app.route('/')
 def index():
@@ -172,12 +198,22 @@ def registerUser():
     con.commit()
     return render_template('login.html')
 
+@app.route('/correct', methods=['POST'])
+def correct_text():
+    text = request.form['text']
+    # Perform grammar and error correction here
+    tool = language_tool_python.LanguageTool('en-US')
+    corrected_text = tool.correct(text)
+    return jsonify({'corrected_text': corrected_text})
+
 @app.route('/email', methods=['POST'])
 def email():
     reciever = request.form['reciever']
     subject = request.form['subject']
     message = request.form['message']
     sender = g.c
+    subject = grammarCorrection(subject)
+    message = grammarCorrection(message)
     subject = subject.upper()
     message = message.upper()
     hm = {}
