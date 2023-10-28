@@ -178,6 +178,8 @@ def email():
     subject = request.form['subject']
     message = request.form['message']
     sender = g.c
+    subject = subject.upper()
+    message = message.upper()
     hm = {}
     key = ''
     alpha = [i for i in range(26)]
