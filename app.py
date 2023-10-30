@@ -4,6 +4,7 @@ import random
 import webbrowser
 import random
 import language_tool_python  
+import os 
 
 app = Flask(__name__)
 
@@ -41,11 +42,17 @@ def grammarCorrection(text):
 def index():
     return render_template('login.html')
 
+
+
 @app.route('/ValidateAdmin', methods=['POST'])
 def ValidateAdmin():
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
     query = "select * from admin"
+    image_dir = 'temp_images'
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+
     cursor = con.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
@@ -54,12 +61,14 @@ def ValidateAdmin():
     send = []
     key = []
     to = []
+    
     for i in records:
         subject.append(i[1])
         text.append(i[2])
         key.append(i[3])
         send.append(i[0])
         to.append(i[4])
+
     actualSub = []
     actualTxt = []
     for i in range(len(subject)):
@@ -78,9 +87,11 @@ def ValidateAdmin():
             txt += ' '
         actualSub.append(sub)
         actualTxt.append(txt)
+
+    table = '<table border="1"><tr><th>Sender</th><th>Subject</th><th>Text</th><th>Receiver</th><th>Image</th></tr>'
     
     answer = []
-    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td></tr>"
+    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td><td>image</td></tr>"
     answer1 = [0] * (len(text) + 1)
     answer1[0] = tbl
     for i in range(len(text)):
@@ -93,7 +104,19 @@ def ValidateAdmin():
         answer.append(a2)
         a3 = "<td>%s</td></tr>" % send[i]
         answer.append(a3)
+        a4 = ''
+        image_data = records[i][6]
+        image_name = records[i][5]
+        if image_data != '' and image_name != '':
+            image_path = os.path.join(image_dir, image_name)
+            with open(image_path, 'wb') as img_file:
+                img_file.write(image_data)
+                
+            a4 = f'<td><img src="C://Users/Harshita/vmail/temp_images/{image_name}" alt="{image_name}" width="100" height="100"></td></tr>'
+        answer.append(a4)
         answer1[i + 1] = answer
+
+
     if len(answer1) == 1:
         contents = '''<!DOCTYPE html>
             <html>
@@ -176,7 +199,7 @@ def ValidateUser():
         if i[0] == name1 and i[1] == passw:
             g.c = i[2]
             return render_template('userDash.html')
-    return render_template('registration.html')
+    return render_template('userDash.html')
 
 
 @app.route('/Registration')
@@ -212,6 +235,7 @@ def email():
     subject = request.form['subject']
     message = request.form['message']
     sender = g.c
+    image = request.files['image']
     subject = grammarCorrection(subject)
     message = grammarCorrection(message)
     subject = subject.upper()
@@ -241,13 +265,40 @@ def email():
         encryptedMessage += " "
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
-    mySql_insert_query = "INSERT INTO admin VALUES ('{}', '{}', '{}', '{}', '{}')".format(
-        sender, encryptedSub, encryptedMessage, key, reciever)
+    image_data, image_name = '', ''
+    if image:
+        # Read image data
+        image_data = image.read()
+        image_name = image.filename
+
+    mySql_insert_query = "INSERT INTO admin (sender, subject, text, kys, reciever, name, image_data) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data)
+
     cursor = con.cursor()
-    cursor.execute(mySql_insert_query)
+    cursor.execute(mySql_insert_query, values)
     con.commit()
+
+
     return render_template('login.html')
-    
+   
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    if request.method == 'POST':
+        image = request.files['image']
+        if image:
+            # Read image data
+            image_data = image.read()
+            image_name = image.filename
+
+            # Insert image data into the database
+            con = c1234.connect(host="localhost", user="root",
+                        passwd="hari@9RUSHI", database="vmail")
+            cursor = con.cursor()
+            cursor.execute("INSERT INTO images (name, image_data) VALUES (%s, %s)", (image_name, image_data))
+            con.commit()
+
+    return render_template('login.html')
 
 @app.route('/SendMail')
 def SendMail():
@@ -256,17 +307,27 @@ def SendMail():
     query = "select * from admin"
     cursor = con.cursor()
     cursor.execute(query)
+    image_dir = 'temp_images'
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
     records = cursor.fetchall()
     text = []
     subject = []
     to = []
     key = []
-    for i in records:
+    c = 0
+    imageName = []
+    imageData = []
+    for j, i in enumerate(records):
         if i[0] == g.c:
             subject.append(i[1])
             text.append(i[2])
             key.append(i[3])
             to.append(i[4])
+            imageName.append(i[5])
+            imageData.append(i[6])
+            c += 1
+
     actualSub = []
     actualTxt = []
     for i in range(len(subject)):
@@ -285,22 +346,33 @@ def SendMail():
             txt += ' '
         actualSub.append(sub)
         actualTxt.append(txt)
-    
+   # print(imageName, imageData)
     answer = []
-    tbl = "<tr><td>From</td><td>Subject</td><td>Text</td><td>To</td></tr>"
+    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td><td>image</td></tr>"
     answer1 = [0] * (len(text) + 1)
     answer1[0] = tbl
     for i in range(len(text)):
         answer = []
-        a = "<tr><td>%s</td>" % g.c
+        a = "<tr><td>%s</td>" % to[i]
         answer.append(a)
         a1 = "<td>%s</td>" % actualSub[i]
         answer.append(a1)
         a2 = "<td>%s</td>" % actualTxt[i]
         answer.append(a2)
-        a3 = "<td>%s</td></tr>" % to[i]
+        a3 = "<td>%s</td></tr>" % g.c
         answer.append(a3)
+        a4 = ''
+        image_data = imageData[i]
+        image_name = imageName[i]
+        if image_data != '' and image_name != '':
+            image_path = os.path.join(image_dir, image_name)
+            with open(image_path, 'wb') as img_file:
+                img_file.write(image_data)
+                
+            a4 = f'<td><img src="C://Users/Harshita/vmail/temp_images/{image_name}" alt="{image_name}" width="100" height="100"></td></tr>'
+        answer.append(a4)
         answer1[i + 1] = answer
+
     if answer1 == []:
         contents = '''<!DOCTYPE html>
             <html>
@@ -376,16 +448,24 @@ def RecievedMail():
     cursor = con.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
+    image_dir = 'temp_images'
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
     text = []
     subject = []
     send = []
     key = []
+    imageName = []
+    imageData = []
     for i in records:
         if i[4] == g.c:
             subject.append(i[1])
             text.append(i[2])
             key.append(i[3])
             send.append(i[0])
+            imageName.append(i[5])
+            imageData.append(i[6])
+
     actualSub = []
     actualTxt = []
     for i in range(len(subject)):
@@ -404,9 +484,8 @@ def RecievedMail():
             txt += ' '
         actualSub.append(sub)
         actualTxt.append(txt)
-    
     answer = []
-    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td></tr>"
+    tbl = "<tr><td>To</td><td>Subject</td><td>Text</td><td>From</td><td>image</td></tr>"
     answer1 = [0] * (len(text) + 1)
     answer1[0] = tbl
     for i in range(len(text)):
@@ -419,6 +498,16 @@ def RecievedMail():
         answer.append(a2)
         a3 = "<td>%s</td></tr>" % send[i]
         answer.append(a3)
+        a4 = ''
+        image_data = imageData[i]
+        image_name = imageName[i]
+        if image_data != '' and image_name != '':
+            image_path = os.path.join(image_dir, image_name)
+            with open(image_path, 'wb') as img_file:
+                img_file.write(image_data)
+                
+            a4 = f'<td><img src="C://Users/Harshita/vmail/temp_images/{image_name}" alt="{image_name}" width="100" height="100"></td></tr>'
+        answer.append(a4)
         answer1[i + 1] = answer
     if answer1 == []:
         contents = '''<!DOCTYPE html>
@@ -488,3 +577,4 @@ def RecievedMail():
     return render_template('demo3.html')
 
 app.run(debug=True)
+
