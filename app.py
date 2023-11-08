@@ -5,6 +5,35 @@ import webbrowser
 import random
 import language_tool_python  
 import os 
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def send_mail(sender, reciever, subject, msg):
+    sender_email = '20b01a05c6@svecw.edu.in'
+    sender_password = 'hari@9RUSHI'  # Your email account password
+    recipient_email = reciever
+    smtp_server = 'smtp.gmail.com'  # SMTP server for Gmail
+
+    # Create an email message
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = recipient_email
+    message['Subject'] = subject
+    body = "You have got an msg from " + sender + "  message : " + msg + " View in vmail app"
+    message.attach(MIMEText(body, 'plain'))
+
+    # Connect to the SMTP server and send the email
+    try:
+        server = smtplib.SMTP(smtp_server, 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, recipient_email, text)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        print("An error occurred:", str(e))
 
 app = Flask(__name__)
 
@@ -238,6 +267,7 @@ def email():
     image = request.files['image']
     subject = grammarCorrection(subject)
     message = grammarCorrection(message)
+    send_mail(sender, reciever, subject, message)
     subject = subject.upper()
     message = message.upper()
     hm = {}
