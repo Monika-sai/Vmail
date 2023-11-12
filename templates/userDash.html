@@ -1,168 +1,442 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Email Form</title>
-    <meta charset='utf-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
-  <!-- Boxicons CSS -->
-  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-  <link rel="stylesheet" href="static/css/userdash-style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
-</head>
-<body>
-   
-   <nav class='sidebar close'>
-      <header>
-        <div class='image-text'>
-          <span class='image'>
-            <img src="https://cdn.iconscout.com/icon/premium/png-256-thumb/voice-mail-1-538663.png" alt="VMail" />
-          </span>
-         
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Font Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="userdash-style.css" />
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header__left img {
+  object-fit: contain;
+  height: 40px;
+  margin-left: 5px;
+}
+
+.header__left span {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.header__middle {
+  display: flex;
+  flex: 0.7;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.material-icons {
+  color: #71767c;
+}
+
+.header__middle input {
+  border: none;
+  width: 100%;
+  padding: 10px;
+  outline: none;
+  font-size: medium;
+  background-color: transparent;
+}
+
+.header__right {
+  display: flex;
+  padding-right: 20px;
+  align-items: center;
+}
+
+.header__right span {
+  padding: 10px;
+  cursor: pointer;
+  color: #71767c;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0.3;
+  max-width: 300px;
+  padding-right: 20px;
+  background-color: #f0f0f0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar__compose {
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-bottom: 15px;
+  text-transform: capitalize;
+  color: #71767c;
+  padding: 15px;
+  border-radius: 30px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  box-shadow: 0px 2px 5px -2px rgba(0, 0, 0, 0.75);
+}
+
+.sidebar__compose span {
+  margin-right: 5px;
+}
+
+.sidebarOption {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 10px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  cursor: pointer;
+  color: #71767c;
+}
+
+.sidebarOption .material-icons {
+  padding: 5px;
+}
+
+.sidebarOption h3 {
+  flex: 1;
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.sidebarOption:hover,
+.sidebarOption:hover h3,
+.sidebarOption:hover .material-icons,
+.sidebarOption__active,
+.sidebarOption__active h3,
+.sidebarOption__active .material-icons {
+  background-color: #ececec;
+  color: #202124;
+  font-weight: 800;
+}
+
+.sidebar__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar__footerIcons .material-icons {
+  margin: 7px;
+  cursor: pointer;
+  color: #71767c;
+}
+
+/* main body */
+.main__body {
+  display: flex;
+  height: 100vh;
+}
+
+body {
+  height: 100vh;
+  overflow-y: hidden;
+  background-color: #f4f4f4;
+}
+
+/* email list */
+.emailList {
+  flex: 1;
+  overflow: auto;
+}
+
+.emailList__settings {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: white;
+  z-index: 999;
+  padding: 8px;
+}
+
+.emailList__settingsLeft {
+  display: flex;
+  align-items: center;
+}
+
+.emailList__settings .material-icons {
+  margin: 5px;
+  cursor: pointer;
+  color: #71767c;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  border-bottom-width: 2px;
+  padding: 15px;
+  min-width: 200px;
+  cursor: pointer;
+  color: grey;
+  border-width: 0;
+}
+
+.emailList__sections {
+  position: sticky;
+  top: 0;
+  display: flex;
+  background-color: white;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 999;
+}
+
+.section__selected {
+  background-color: #fff;
+  border-width: 3px;
+  color: #202124;
+  border-bottom: 3px solid #202124;
+}
+
+.section__selected .material-icons {
+  color: #202124;
+}
+
+.section:hover {
+  background-color: #fff;
+  border-width: 3px;
+}
+
+.section h4 {
+  font-size: 14px;
+  margin-left: 15px;
+  color: #202124;
+}
+
+.emailRow__options {
+  display: flex;
+  align-items: center;
+  margin: 15px;
+}
+
+.emailRow__options .material-icons,
+input {
+  margin: 15px;
+  color: #71767c;
+}
+
+.emailRow {
+  display: flex;
+  align-items: center;
+  height: 70px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  z-index: 999;
+  background-color: #fff;
+}
+
+.emailRow:hover {
+  border-top: 1px solid #f0f0f0;
+  box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.24);
+}
+
+.emailRow__message {
+  padding-left: 40px;
+  display: flex;
+  flex: 0.8;
+  align-items: center;
+  font-size: 13px;
+}
+
+.emailRow__message h4 {
+  width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #202124;
+}
+
+.emailRow__title {
+  font-size: 13px;
+  flex: 0.3;
+  color: #71767c;
+}
+
+.emailRow__time {
+  padding-right: 15px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #71767c;
+}
+
+.emailRow__description {
+  font-weight: 400;
+  color: grey;
+}
+
+    </style>
+  </head>
+  <body>
+    <!-- Header Starts -->
+    <div class="header">
+      <div class="header__left">
+        <span class="material-icons"> menu </span>
+        <img
+          src="https://i.pinimg.com/originals/ae/47/fa/ae47fa9a8fd263aa364018517020552d.png"
+          alt=""
+        />
+      </div>
+
+      <div class="header__middle">
+        <span class="material-icons"> search </span>
+        <input type="text" placeholder="Search mail" />
+        <span class="material-icons"> arrow_drop_down </span>
+      </div>
+
+      <div class="header__right">
+        <span class="material-icons"> apps </span>
+        <span class="material-icons"> notifications </span>
+        <span class="material-icons"> account_circle </span>
+      </div>
+    </div>
+    <!-- Header Ends -->
+
+    <!-- Main Body Starts -->
+    <div class="main__body">
+      <!-- Sidebar Starts -->
+      <div class="sidebar">
+        <button class="sidebar__compose"><span class="material-icons"> add </span><a href="{{ url_for('composeMail') }}"> <h3>Compose</h3></a></button>
+        <div class="sidebarOption sidebarOption__active">
+          <span class="material-icons"> inbox </span>
+          <h3>Inbox</h3>
         </div>
-  
-        <i class='bx bx-chevron-right toggle'></i>
-  
-      </header>
-      <div class='menu-bar'>
-         <div class='menu'>
-           <li class='search-box'>
-             <a href="#">
-               <i class='bx bx-search icon'></i>
-               <input type="search" placeholder="Search" />
-             </a>
-           </li>
-           <ul class='menu-links'>
-             <li class='nav-link'>
-               <a href="#">
-                 <i class='bx bx-home-alt icon'></i>
-                 <span class='text nav-text'>Dashboard</span>
-               </a>
-             </li>
-             <li class='nav-link'>
-               <a href="#">
-                  <i class='bx bx-star icon' ></i>
-                 <span class='text nav-text'>Starred</span>
-               </a>
-             </li>
-             <li class='nav-link'>
-                  <a href="{{ url_for('SendMail') }}">
-                     <i class='bx bx-send icon'></i>
-                 <span class='text nav-text'>Sent Mails</span>
-               </a>
-             </li>
-             <li class='nav-link'>
-               <a href="{{ url_for('RecievedMail') }}">
-                  <i class='bx bx-envelope icon' ></i>
-              <span class='text nav-text'>Recieved Mails</span>
-            </a>
-          </li>
-          <li class='nav-link'>
-            <a href="#">
-               <i class="fa fa-exclamation-triangle icon" aria-hidden="true"></i>
-              <span class='text nav-text'>Spam</span>
-            </a>
-          </li>
-          <li class='nav-link'>
-            <a href="#">
-               <i class='bx bx-trash-alt icon'></i>
-              <span class='text nav-text'>Recycle Bin</span>
-            </a>
-          </li>  
-           </ul>
-         </div>
-   
-         <div class='bottom-content'>
-           <li class='nav-link'>
-             <a href="#">
-               <i class='bx bx-log-out icon'></i>
-               <span class='text nav-text'>Logout</span>
-             </a>
-           </li>
-           <li class='mode'>
-             <div class='moon-sun'>
-               <a href="#" >
-                 <i class='bx bx-sun icon sun'></i>
-                 <i class='bx bx-moon icon moon'></i>
-               </a>
-             </div>
-             <span class='mode-text text'>Dark Mode</span>
-             <div class='toggle-switch'>
-               <span class='switch'></span>
-             </div>
-           </li>
-         </div>
-       </div>
-     </nav>
-     
-     <section class="home">
-         <div class="text">
-             <h1>User Dashboard</h1>
-         </div>
-         <div class="text">
-          <div class="button-container">
-            <button onclick="runSpeechRecog('subject')">Speech for Subject</button>
-            <button onclick="runSpeechRecog('message')">Speech for Message</button>
+
+        <div class="sidebarOption">
+          <span class="material-icons"> star </span>
+          <h3>Starred</h3>
         </div>
-        <div class="modal-container">
-          <div class="modal-content">
-              <form name="emailForm" action="{{ url_for('email') }}" method="post" enctype="multipart/form-data">
-                <div class="form-item">
-                  <p class="formLabel" for="reciever">To:</p>
-                  <input type="text" name="reciever" id="reciever" class="form-style" required />
+
+        <div class="sidebarOption">
+          <span class="material-icons"> access_time </span>
+          <h3>Snoozed</h3>
+        </div>
+
+        <div class="sidebarOption">
+          <span class="material-icons"> label_important </span>
+          <h3>Important</h3>
+        </div>
+
+        <div class="sidebarOption">
+          <span class="material-icons"> near_me </span>
+          <a href="{{ url_for('SendMail') }}"> <h3>Sent</h3></a>
+        </div>
+
+        <div class="sidebarOption">
+          <span class="material-icons"> note </span>
+          <h3>Drafts</h3>
+        </div>
+
+        <div class="sidebarOption">
+          <span class="material-icons"> expand_more </span>
+          <h3>More</h3>
+        </div>
+
+        <div class="sidebar__footer">
+          <div class="sidebar__footerIcons">
+            <span class="material-icons"> person </span>
+            <span class="material-icons"> duo </span>
+            <span class="material-icons"> phone </span>
+          </div>
+        </div>
+      </div>
+      <!-- Sidebar Ends -->
+
+      <!-- Email List Starts -->
+      <div class="emailList">
+        <!-- Settings Starts -->
+        <div class="emailList__settings">
+          <div class="emailList__settingsLeft">
+            <input type="checkbox" />
+            <span class="material-icons" > arrow_drop_down </span>
+            <span class="material-icons"> redo </span>
+            <span class="material-icons"> more_vert </span>
+          </div>
+          <div class="emailList__settingsRight">
+            <span class="material-icons"> chevron_left </span>
+            <span class="material-icons"> chevron_right </span>
+            <span class="material-icons"> keyboard_hide </span>
+            <span class="material-icons"> settings </span>
+          </div>
+        </div>
+        <!-- Settings Ends -->
+
+        <!-- Section Starts -->
+        <div class="emailList__sections">
+          <div class="section section__selected">
+            <span class="material-icons"> inbox </span>
+            <h4>Primary</h4>
+          </div>
+
+          <div class="section">
+            <span class="material-icons"> people </span>
+            <h4>Social</h4>
+          </div>
+
+          <div class="section">
+            <span class="material-icons"> local_offer </span>
+            <h4>Promotions</h4>
+          </div>
+        </div>
+        <!-- Section Ends -->
+
+        <!-- Email List rows starts -->
+        <div class="emailList__list">
+          <!-- Email Row Starts -->
+          {% for messag in messages %}
+          <div class = "container">
+          <div class="emailRow row">
+              <div class="emailRow__options col-md-9">
+                <input type="checkbox" name="" id="" />
+                <span class="material-icons"> star_border </span>
+                <span class="material-icons"> label_important </span>
+                <span class="tab"><h3 class="emailRow__title">{{ messag[3].split('@')[0]}}</h3></span>
               </div>
-              <div class="form-item">
-                <p class="formLabel" for="subject">Subject:</p>
-                <input type="text" name="subject" id="subject" class="form-style" required />
-            </div>
-            <div class="form-item">
-              <p class="formLabel" for="message">Message:</p>
-              <textarea  name="message" id="message" rows="4" class="form-style" required ></textarea>
+              <div class="emailRow__message col-md">
+                <a href="{{ url_for('message', message_id=messag[0]) }}">
+                  <h4>{{ messag[1] }}<span class="emailRow__description"> - {{ messag[2] }}</span></h4>
+                </a>
+              </div>
           </div>
-          <div class="form-item">
-            <p class="formLabel" for="image">Upload Image:</p>
-            <input type="file" name="image" id="image" class="form-style" accept="image/*" required />
+          </div>
+          <!-- Email Row Ends -->
+          {% endfor %}
         </div>
-        <div class="form-item">
-        <button type="submit" class="send">Send</button>
+        <!-- Email List rows Ends -->
       </div>
-    
-              </form>
-          </div>
-      </div>
-        <h3 id="output" class="hide"></h3>
-       </div>
-      </div>
-     </section>
-   <script>
-     var currentSubject = "";
-  var currentMessage = "";
-
-  runSpeechRecog = (field) => {
-      document.getElementById("output").innerHTML = "Listening...";
-      var output = document.getElementById('output');
-      var textInput = document.getElementById(field);
-      let recognition = new webkitSpeechRecognition();
-      recognition.onstart = () => {
-          output.innerHTML = "Listening...";
-      }
-      recognition.onresult = (e) => {
-          var transcript = e.results[0][0].transcript;
-          output.innerHTML = transcript;
-          if (field === 'subject') {
-              currentSubject = transcript;
-              textInput.value = currentSubject;
-          } else if (field === 'message') {
-              currentMessage = transcript;
-              textInput.value = currentMessage;
-          }
-      }
-      recognition.start();
-  }
-    
-</script>
-      <!-- Script -->
-<script src="{{ url_for('static', filename='userdash-script.js') }}"></script>  
-
-</body>
+      <!-- Email List Ends -->
+    </div>
+    <!-- Main Body Ends -->
+  </body>
 </html>

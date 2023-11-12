@@ -21,7 +21,9 @@
 <body>
   <div class="box"> 
         <form name = "admin" action = "{{ url_for('registerUser') }}" method = 'post' class="form">
-          <h1 class="form-title">Register</h1>
+          <center><h1 class="form-title">Register</h1></center>
+          <br>
+          <p style="color: red;">Username or password exists</p>
   
         <div class="form-group">
           <input type="text" name = 'uname' id="username" class="form-control" required>
@@ -44,11 +46,7 @@
 
       <button type="submit" class="form-button">Register</button>
         </form>
-
-      <br>
-      <a href = "{{ url_for('login') }}"> Login </a>
       </div>
-      
 
 <!-- Script -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
