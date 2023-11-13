@@ -95,6 +95,22 @@ def grammarCorrection(text):
 def index():
     return render_template('registration.html')
 
+def get_email_suggestions(prefix):
+    con = c1234.connect(host="localhost", user="root",
+                        passwd="hari@9RUSHI", database="vmail")
+    cursor = con.cursor()
+    cursor.execute("SELECT email FROM logindetails WHERE email LIKE '{}' LIMIT 5".format(prefix + '%',))
+    suggestions = [row[0] for row in cursor.fetchall()]
+    con.close()
+    return suggestions
+
+# Endpoint for autocomplete suggestions
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    prefix = request.args.get('prefix', '')
+    suggestions = get_email_suggestions(prefix)
+    return jsonify(suggestions=suggestions)
+
 @app.route('/login')
 def login():
     return render_template('login.html')

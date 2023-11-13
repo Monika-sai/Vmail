@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="userdash-style.css" />
     <style>
-        * {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -33,7 +33,7 @@ body {
 
 .header__left img {
   object-fit: contain;
-  height: 40px;
+  height: 70px;
   margin-left: 5px;
 }
 
@@ -58,7 +58,8 @@ body {
 .header__middle input {
   border: none;
   width: 100%;
-  padding: 10px;
+  height: 0%;
+  /* padding: 10px; */
   outline: none;
   font-size: medium;
   background-color: transparent;
@@ -244,6 +245,7 @@ input {
   margin: 15px;
   color: #71767c;
 }
+
 .emailRow {
   display: flex;
   align-items: center;
@@ -303,7 +305,7 @@ input {
       <div class="header__left">
         <span class="material-icons"> menu </span>
         <img
-          src="{{url_for('static', filename='googlelogo.png')}}" 
+        src="{{url_for('static', filename='googlelogo.png')}}" 
           alt=""
         />
       </div>
@@ -329,7 +331,7 @@ input {
         <button class="sidebar__compose"><span class="material-icons"> add </span><a href="{{ url_for('composeMail') }}"> <h3>Compose</h3></a></button>
         <div class="sidebarOption sidebarOption__active">
           <span class="material-icons"> inbox </span>
-          <a href="{{ url_for('inbox') }}" > <h3>Inbox</h3></a>
+          <h3>Inbox</h3>
         </div>
 
         <div class="sidebarOption">
@@ -413,27 +415,114 @@ input {
         <!-- Email List rows starts -->
         <div class="emailList__list">
           <!-- Email Row Starts -->
-          {% for messag in messages %}
-          <div class="emailRow row">
-              <div class="emailRow__options col-md-5">
+          <!-- {% for messag in messages %}
+          <div class = "container">
+            <div class="emailRow row">
+              <div class="emailRow__options col-md-9">
                 <input type="checkbox" name="" id="" />
                 <span class="material-icons"> star_border </span>
                 <span class="material-icons"> label_important </span>
-                <span class="tab"><h3 class="emailRow__title">{{messag[3].split('@')[0]}}</h3></span>
+                <span class="tab"><h3 class="emailRow__title">{{ messag[3].split('@')[0]}}</h3></span>
               </div>
               <div class="emailRow__message col-md">
                 <a href="{{ url_for('message', message_id=messag[0]) }}">
                   <h4>{{ messag[1] }}<span class="emailRow__description"> - {{ messag[2] }}</span></h4>
                 </a>
               </div>
+            </div>
+          </div> -->
+          <!-- <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Email Form</title>
+              <meta charset='utf-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+
+            <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+            <link rel="stylesheet" href="static/css/userdash-style.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            
+          </head> 
+          <body>-->
+
+        <section class="home">
+            <!-- <div class="text">
+                <h1>User Dashboard</h1>
+            </div> -->
+          <div class="text">
+            <div class="button-container">
+              <button onclick="runSpeechRecog('subject')">Speech for Subject</button>
+              <button onclick="runSpeechRecog('message')">Speech for Message</button>
+            </div>
+            <div class="modal-container">
+              <div class="modal-content">
+                <form name="emailForm" action="{{ url_for('email') }}" method="post" enctype="multipart/form-data">
+                  <div class="form-item">
+                    <p class="formLabel" for="reciever">To:</p>
+                    <input type="text" name="reciever" id="reciever" class="form-style" required />
+                  </div>
+                  <div class="form-item">
+                    <p class="formLabel" for="subject">Subject:</p>
+                    <input type="text" name="subject" id="subject" class="form-style" required />
+                  </div>
+                  <div class="form-item">
+                    <p class="formLabel" for="message">Message:</p>
+                    <textarea  name="message" id="message" rows="4" class="form-style" required ></textarea>
+                  </div>
+                  <div class="form-item">
+                    <p class="formLabel" for="image">Upload Image:</p>
+                    <input type="file" name="image" id="image" class="form-style" accept="image/*" />
+                  </div>
+                  <div class="form-item">
+                      <button type="submit" class="send">Send</button>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+                <h3 id="output" class="hide"></h3>
           </div>
-          <!-- Email Row Ends -->
-          {% endfor %}
-        </div>
-        <!-- Email List rows Ends -->
+        </section>
       </div>
-      <!-- Email List Ends -->
+      <!-- Email List rows Ends -->
     </div>
-    <!-- Main Body Ends -->
+    <!-- Email List Ends -->
+  </div>
+  <!-- Main Body Ends -->
+        <script>
+        var currentSubject = "";
+        var currentMessage = "";
+
+        runSpeechRecog = (field) => {
+        document.getElementById("output").innerHTML = "Listening...";
+        var output = document.getElementById('output');
+        var textInput = document.getElementById(field);
+        let recognition = new webkitSpeechRecognition();
+        recognition.onstart = () => {
+            output.innerHTML = "Listening...";
+        }
+        recognition.onresult = (e) => {
+            var transcript = e.results[0][0].transcript;
+            output.innerHTML = transcript;
+            if (field === 'subject') {
+                currentSubject = transcript;
+                textInput.value = currentSubject;
+            } else if (field === 'message') {
+                currentMessage = transcript;
+                textInput.value = currentMessage;
+            }
+        }
+        recognition.start();
+        }
+
+          </script>
+          <!-- Script -->
+          <!-- <script src="{{ url_for('static', filename='userdash-script.js') }}"></script>   -->
+
+<!-- </body>
+</html> -->
+          <!-- Email Row Ends -->
+          <!-- {% endfor %} -->
+        
   </body>
 </html>
