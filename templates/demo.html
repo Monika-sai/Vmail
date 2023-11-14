@@ -4,525 +4,765 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Google Font Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <link rel="stylesheet" href="userdash-style.css" />
+    <title>Gmail-clone</title>
+    <link rel="icon" type="image/x-icon" href="./img/logo-64.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="media.css" />
+    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+    <script defer src="./script.js"></script>
     <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+        @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+
+.home {
+  position: relative;
+  height: 100vh;
+  left: 250px;
+  width: calc(100% - 250px);
+  transition: var(--tran-05);
 }
 
-body {
-  font-family: 'Arial', sans-serif;
+.home .text {
+  font-weight: 500;
+  font-size: 30px;
+  color: var(--text-color);
+  padding: 8px 40px;
+  position: absolute;
 }
 
-/* Header */
-.header {
+.button-container {
+  margin-top:100px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #fff;
-  padding: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.header__left img {
-  object-fit: contain;
-  height: 70px;
-  margin-left: 5px;
-}
-
-.header__left span {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.header__middle {
-  display: flex;
-  flex: 0.7;
-  align-items: center;
-  background-color: #f0f0f0;
-  padding: 10px;
+  width: 27rem;
+  box-shadow: 0 0 13px #0000003d;
   border-radius: 5px;
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 1rem; /* Add some padding to create space between buttons and the container */
 }
 
-.material-icons {
-  color: #71767c;
-}
-
-.header__middle input {
+/* Styles for the buttons */
+.button-container button {
+  padding: 0.75rem;
   border: none;
-  width: 100%;
-  height: 0%;
-  /* padding: 10px; */
-  outline: none;
-  font-size: medium;
-  background-color: transparent;
-}
-
-.header__right {
-  display: flex;
-  padding-right: 20px;
-  align-items: center;
-}
-
-.header__right span {
-  padding: 10px;
+  background-color: #695cfe; 
+  color: #fff; 
+  border-radius: 5px;
   cursor: pointer;
-  color: #71767c;
 }
 
-/* Sidebar */
-.sidebar {
-  flex: 0.3;
-  max-width: 300px;
-  padding-right: 20px;
-  background-color: #f0f0f0;
-  height: 100vh;
-  overflow-y: auto;
+.button-container button:hover {
+  background-color: #958bff;
 }
-
-.sidebar__compose {
-  margin-top: 15px;
-  margin-left: 10px;
-  margin-bottom: 15px;
-  text-transform: capitalize;
-  color: #71767c;
-  padding: 15px;
-  border-radius: 30px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  outline: none;
-  border: none;
-  box-shadow: 0px 2px 5px -2px rgba(0, 0, 0, 0.75);
-}
-
-.sidebar__compose span {
-  margin-right: 5px;
-}
-
-.sidebarOption {
-  display: flex;
-  align-items: center;
-  height: 40px;
-  padding: 0 10px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  cursor: pointer;
-  color: #71767c;
-}
-
-.sidebarOption .material-icons {
-  padding: 5px;
-}
-
-.sidebarOption h3 {
-  flex: 1;
-  margin-left: 10px;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.sidebarOption:hover,
-.sidebarOption:hover h3,
-.sidebarOption:hover .material-icons,
-.sidebarOption__active,
-.sidebarOption__active h3,
-.sidebarOption__active .material-icons {
-  background-color: #ececec;
-  color: #202124;
-  font-weight: 800;
-}
-
-.sidebar__footer {
-  display: flex;
+.modal-container { 
+  position: relative;
+  top: 20px;
+ 
+  bottom: 10px;
+  width: 225%;
+  height: 100%;
   justify-content: center;
-}
-
-.sidebar__footerIcons .material-icons {
-  margin: 7px;
-  cursor: pointer;
-  color: #71767c;
-}
-
-/* main body */
-.main__body {
-  display: flex;
-  height: 100vh;
-}
-
-body {
-  height: 100vh;
-  overflow-y: hidden;
-  background-color: #f4f4f4;
-}
-
-/* email list */
-.emailList {
-  flex: 1;
-  overflow: auto;
-}
-
-.emailList__settings {
-  position: sticky;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: white;
-  z-index: 999;
-  padding: 8px;
-}
-
-.emailList__settingsLeft {
-  display: flex;
   align-items: center;
+  z-index: 0;
 }
 
-.emailList__settings .material-icons {
-  margin: 5px;
-  cursor: pointer;
-  color: #71767c;
+.modal-content {
+  background: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  width: 45%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.section {
-  display: flex;
-  align-items: center;
-  border-bottom-width: 2px;
-  padding: 15px;
-  min-width: 200px;
-  cursor: pointer;
-  color: grey;
-  border-width: 0;
-}
-
-.emailList__sections {
-  position: sticky;
-  top: 0;
-  display: flex;
-  background-color: white;
-  border-bottom: 1px solid #f0f0f0;
-  z-index: 999;
-}
-
-.section__selected {
-  background-color: #fff;
-  border-width: 3px;
-  color: #202124;
-  border-bottom: 3px solid #202124;
-}
-
-.section__selected .material-icons {
-  color: #202124;
-}
-
-.section:hover {
-  background-color: #fff;
-  border-width: 3px;
-}
-
-.section h4 {
-  font-size: 14px;
-  margin-left: 15px;
-  color: #202124;
-}
-
-.emailRow__options {
-  display: flex;
-  align-items: center;
-  margin: 15px;
-}
-
-.emailRow__options .material-icons,
-input {
-  margin: 15px;
-  color: #71767c;
-}
-
-.emailRow {
-  display: flex;
-  align-items: center;
-  height: 70px;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
-  z-index: 999;
-  background-color: #fff;
-}
-
-.emailRow:hover {
-  border-top: 1px solid #f0f0f0;
-  box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.24);
-}
-
-.emailRow__message {
-  padding-left: 40px;
-  display: flex;
-  flex: 0.8;
-  align-items: center;
-  font-size: 13px;
-}
-
-.emailRow__message h4 {
-  width: 400px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #202124;
-}
-
-.emailRow__title {
-  font-size: 13px;
-  flex: 0.3;
-  color: #71767c;
-}
-
-.emailRow__time {
-  padding-right: 15px;
-  font-size: 10px;
+/* Style labels to be on top of inputs */
+.formLabel {
   font-weight: bold;
-  color: #71767c;
+  color: #333;
+  font-size: 24px;
 }
 
-.emailRow__description {
-  font-weight: 400;
-  color: grey;
+/* Style text inputs */
+.form-style {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
+/* Style the button */
+button.send {
+  background-color: #695cfe;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  border: none;
+  margin-left: 40%;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 40px;
+  width:100px;
+}
+
+/* Hover effect for the button */
+button.send:hover {
+  background-color: #958bff;
+}
+@media only screen and (max-width: 600px) {
+    section {
+      display: none;
+    }
+  
+    body::after {
+      content: "WE ARE MAKING RESPONSIVE STAY TUNE 😉";
+      background-color: blueviolet;
+      color: orange;
+      height: 100vh;
+      font-size: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0px 16px;
+    }
+  }
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --light-gray: #f8f9fa;
+    --middle-gray: #e9ecef;
+    --dark-gray: #495057;
+    --light-blue: #d0ebff;
+  }
+  
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f6f8fc;
+    overflow: hidden;
+  }
+  
+  section {
+    height: 100vh;
+    display: grid;
+    grid-template-areas: "header header header" "nav main-content sidebar" "nav main-content sidebar";
+    grid-template-columns: 265px 4fr 60px;
+    grid-template-rows: 70px 1fr;
+  }
+  
+  header,
+  aside,
+  footer,
+  nav {
+    padding: 20px;
+  }
+  
+  header {
+    grid-area: header;
+  }
+  nav {
+    grid-area: nav;
+  }
+  main {
+    grid-area: main-content;
+  }
+  aside {
+    grid-area: sidebar;
+  }
+  
+  footer {
+    grid-area: footer;
+  }
+  
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--dark-gray);
+  }
+  
+  ion-icon {
+    cursor: pointer;
+  }
+  
+  .hover:hover {
+    transition: all 0.3s;
+    background-color: #d8dbdd;
+    cursor: pointer;
+  }
+  
+  .header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .left-area img:hover {
+    cursor: pointer;
+  }
+  
+  .menu {
+    display: flex;
+    flex-direction: column;
+    border-radius: 50%;
+    padding: 8px;
+  }
+  
+  .menu .icon {
+    height: 2px;
+    width: 20px;
+    background-color: #464f58;
+    margin: 2px 0;
+  }
+  
+  .mail-text {
+    font-size: 20px;
+    letter-spacing: 0.7px;
+    color: var(--dark-gray);
+  }
+  
+  .mail-text:hover {
+    cursor: pointer;
+  }
+  
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px;
+    border-radius: 10px;
+    background-color: var(--middle-gray);
+  }
+  
+  .search ion-icon {
+    height: 24px;
+    width: 24px;
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .search input {
+    border: none;
+    outline: none;
+    background-color: var(--middle-gray);
+    padding: 2px;
+    font-size: 18px;
+  }
+  
+  .left-area {
+    flex: 1;
+  }
+  
+  .middle-area {
+    flex: 3;
+  }
+  
+  .right-area {
+    flex: 1;
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .right-area ion-icon {
+    width: 22px;
+    height: 22px;
+    color: var(--dark-gray);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .right-area img {
+    border-radius: 50%;
+    height: 36px;
+    object-fit: contain;
+  }
+  
+  .right-area img:hover {
+    cursor: pointer;
+  }
+  
+  .nav_container {
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-left: -20px;
+    padding: 12px;
+    gap: 40px;
+  }
+  
+  .nav_top span {
+    width: 75%;
+    background-color: var(--light-blue);
+    padding: 20px 32px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .nav_top span ion-icon {
+    font-size: 24px;
+  }
+  
+  .nav_middle ul li {
+    font-size: 14px;
+    list-style: none;
+    margin-left: 4px;
+    margin-bottom: 4px;
+    padding: 8px;
+  }
+  
+  .nav_middle ul li a {
+    display: flex;
+    gap: 12px;
+    letter-spacing: 1px;
+  }
+  
+  .nav_middle ul li a ion-icon,
+  .nav_bottom ion-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  ul li:last-child {
+    margin-bottom: 0;
+  }
+  
+  .nav_middle ul li:first-child {
+    display: flex;
+    justify-content: space-between;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #e7f5ff;
+  }
+  
+  .nav_middle ul li:first-child span {
+    margin-right: 8px;
+  }
+  
+  .nav_middle ul li:first-child a,
+  .nav_middle ul li:first-child span {
+    font-weight: 600;
+    color: #000;
+  }
+  
+  .nav_middle ul li:hover {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: #e7f5ff;
+  }
+  
+  .nav_bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .nav_bottom ion-icon {
+    transition: all 0.3s;
+    width: 20px;
+    height: 20px;
+    color: var(--dark-gray);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .main_content {
+    margin-top: 5px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    background-color: var(--middle-gray);
+    overflow: hidden;
+  }
+  
+  .content-icon,
+  .star {
+    transition: all 0.3s;
+    width: 16px;
+    height: 16px;
+    color: var(--dark-gray);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .chev {
+    color: #b1b1b1;
+  }
+  
+  .main_content .top {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #fff;
+    color: var(--dark-gray);
+  }
+  
+  .messages:hover {
+    cursor: pointer;
+    box-shadow: 0px 1px 4px 0.2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .check {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+  }
+  
+  .check img {
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  .check span {
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    display: none;
+  }
+  
+  .check img:hover + span {
+    transition: all 0.3s;
+    display: inline;
+  }
+  
+  .sort_numbers {
+    transition: all 0.3s;
+    padding: 8px;
+    border-radius: 6px;
+  }
+  
+  .main_content .top .right,
+  .main_content .top .left,
+  .main_content .messages .messages_left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .messages_area {
+    height: 80vh;
+    overflow: auto;
+  }
+  
+  .messages {
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border-bottom: 0.8px solid #ced4da;
+    color: var(--dark-gray);
+  }
+  
+  .check_2 span {
+    position: absolute;
+    left: 5px;
+  }
+  
+  .messages_left ion-icon:hover {
+    color: #000;
+  }
+  
+  .aside_icons {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .aside_icons img {
+    transition: all 0.3s;
+    height: 40px;
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .aside_icons span {
+    height: 2px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: var(--middle-gray);
+  }
+  
+  .aside_icons ion-icon {
+    transition: all 0.3s;
+    width: 20px;
+    height: 20px;
+    color: var(--dark-gray);
+    padding: 8px;
+    border-radius: 50%;
+  }
+  
+  .aside_icons div:last-child {
+    margin-top: auto;
+  }
 
     </style>
   </head>
   <body>
-    <!-- Header Starts -->
-    <div class="header">
-      <div class="header__left">
-        <span class="material-icons"> menu </span>
-        <img
-        src="{{url_for('static', filename='googlelogo.png')}}" 
-          alt=""
-        />
-      </div>
-
-      <div class="header__middle">
-        <span class="material-icons"> search </span>
-        <input type="text" placeholder="Search mail" />
-        <span class="material-icons"> arrow_drop_down </span>
-      </div>
-
-      <div class="header__right">
-        <span class="material-icons"> apps </span>
-        <span class="material-icons"> notifications </span>
-        <span class="material-icons"> account_circle </span>
-      </div>
-    </div>
-    <!-- Header Ends -->
-
-    <!-- Main Body Starts -->
-    <div class="main__body">
-      <!-- Sidebar Starts -->
-      <div class="sidebar">
-        <button class="sidebar__compose"><span class="material-icons"> add </span><a href="{{ url_for('composeMail') }}"> <h3>Compose</h3></a></button>
-        <div class="sidebarOption sidebarOption__active">
-          <span class="material-icons"> inbox </span>
-          <h3>Inbox</h3>
+    <section>
+      <header class="header">
+        <div class="left-area flex">
+          <div class="menu hover">
+            <span class="icon"></span>
+            <span class="icon"></span>
+            <span class="icon"></span>
+          </div>
+          <img src="./img/logo-24.png" alt="logo" />
+          <span class="mail-text">Gmail</span>
         </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> star </span>
-          <h3>Starred</h3>
-        </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> access_time </span>
-          <h3>Snoozed</h3>
-        </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> label_important </span>
-          <h3>Important</h3>
-        </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> near_me </span>
-          <a href="{{ url_for('SendMail') }}"> <h3>Sent</h3></a>
-        </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> note </span>
-          <h3>Drafts</h3>
-        </div>
-
-        <div class="sidebarOption">
-          <span class="material-icons"> expand_more </span>
-          <h3>More</h3>
-        </div>
-
-        <div class="sidebar__footer">
-          <div class="sidebar__footerIcons">
-            <span class="material-icons"> person </span>
-            <span class="material-icons"> duo </span>
-            <span class="material-icons"> phone </span>
+        <div class="middle-area">
+          <div class="search">
+            <ion-icon name="search-outline" class="hover"></ion-icon>
+            <input type="search" placeholder="Search mail" />
           </div>
         </div>
-      </div>
-      <!-- Sidebar Ends -->
-
-      <!-- Email List Starts -->
-      <div class="emailList">
-        <!-- Settings Starts -->
-        <div class="emailList__settings">
-          <div class="emailList__settingsLeft">
-            <input type="checkbox" />
-            <span class="material-icons" > arrow_drop_down </span>
-            <span class="material-icons"> redo </span>
-            <span class="material-icons"> more_vert </span>
-          </div>
-          <div class="emailList__settingsRight">
-            <span class="material-icons"> chevron_left </span>
-            <span class="material-icons"> chevron_right </span>
-            <span class="material-icons"> keyboard_hide </span>
-            <span class="material-icons"> settings </span>
-          </div>
+        <div class="right-area flex">
+          <ion-icon name="help-circle-outline" class="hover"></ion-icon>
+          <ion-icon name="settings-outline" class="hover"></ion-icon>
+          <ion-icon name="apps" class="hover"></ion-icon>
+          <img src="./img/man.jpg" alt="user-photo" />
         </div>
-        <!-- Settings Ends -->
-
-        <!-- Section Starts -->
-        <div class="emailList__sections">
-          <div class="section section__selected">
-            <span class="material-icons"> inbox </span>
-            <h4>Primary</h4>
+      </header>
+      <nav>
+        <div class="nav_container">
+          <div class="nav_top">
+            <a href="{{ url_for('composeMail') }}"></a>
+            <span> <ion-icon name="pencil"></ion-icon> Compose</span>
           </div>
-
-          <div class="section">
-            <span class="material-icons"> people </span>
-            <h4>Social</h4>
-          </div>
-
-          <div class="section">
-            <span class="material-icons"> local_offer </span>
-            <h4>Promotions</h4>
-          </div>
-        </div>
-        <!-- Section Ends -->
-
-        <!-- Email List rows starts -->
-        <div class="emailList__list">
-          <!-- Email Row Starts -->
-          <!-- {% for messag in messages %}
-          <div class = "container">
-            <div class="emailRow row">
-              <div class="emailRow__options col-md-9">
-                <input type="checkbox" name="" id="" />
-                <span class="material-icons"> star_border </span>
-                <span class="material-icons"> label_important </span>
-                <span class="tab"><h3 class="emailRow__title">{{ messag[3].split('@')[0]}}</h3></span>
-              </div>
-              <div class="emailRow__message col-md">
-                <a href="{{ url_for('message', message_id=messag[0]) }}">
-                  <h4>{{ messag[1] }}<span class="emailRow__description"> - {{ messag[2] }}</span></h4>
+          <div class="nav_middle">
+            <ul>
+              <li>
+                <a href="#">
+                  <ion-icon name="image-outline"></ion-icon>
+                  Inbox
                 </a>
-              </div>
-            </div>
-          </div> -->
-          <!-- <!DOCTYPE html>
-          <html>
-          <head>
-              <title>Email Form</title>
-              <meta charset='utf-8'>
-            <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
-
-            <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-            <link rel="stylesheet" href="static/css/userdash-style.css">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-            
-          </head> 
-          <body>-->
-
-        <section class="home">
-            <!-- <div class="text">
-                <h1>User Dashboard</h1>
-            </div> -->
-          <div class="text">
-            <div class="button-container">
-              <button onclick="runSpeechRecog('subject')">Speech for Subject</button>
-              <button onclick="runSpeechRecog('message')">Speech for Message</button>
-            </div>
-            <div class="modal-container">
-              <div class="modal-content">
-                <form name="emailForm" action="{{ url_for('email') }}" method="post" enctype="multipart/form-data">
-                  <div class="form-item">
-                    <p class="formLabel" for="reciever">To:</p>
-                    <input type="text" name="reciever" id="reciever" class="form-style" required />
-                  </div>
-                  <div class="form-item">
-                    <p class="formLabel" for="subject">Subject:</p>
-                    <input type="text" name="subject" id="subject" class="form-style" required />
-                  </div>
-                  <div class="form-item">
-                    <p class="formLabel" for="message">Message:</p>
-                    <textarea  name="message" id="message" rows="4" class="form-style" required ></textarea>
-                  </div>
-                  <div class="form-item">
-                    <p class="formLabel" for="image">Upload Image:</p>
-                    <input type="file" name="image" id="image" class="form-style" accept="image/*" />
-                  </div>
-                  <div class="form-item">
-                      <button type="submit" class="send">Send</button>
-                  </div>
-
-                </form>
-              </div>
-            </div>
-                <h3 id="output" class="hide"></h3>
+                <span>4</span>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="star-outline"></ion-icon>
+                  Starred
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="time-outline"></ion-icon>
+                  Snoozed
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('SendMail') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Sent
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="document-outline"></ion-icon>
+                  Draft
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="chevron-down-outline"></ion-icon>
+                  More
+                </a>
+              </li>
+            </ul>
           </div>
-        </section>
-      </div>
-      <!-- Email List rows Ends -->
-    </div>
-    <!-- Email List Ends -->
-  </div>
-  <!-- Main Body Ends -->
-        <script>
-        var currentSubject = "";
-        var currentMessage = "";
-
-        runSpeechRecog = (field) => {
-        document.getElementById("output").innerHTML = "Listening...";
-        var output = document.getElementById('output');
-        var textInput = document.getElementById(field);
-        let recognition = new webkitSpeechRecognition();
-        recognition.onstart = () => {
-            output.innerHTML = "Listening...";
-        }
-        recognition.onresult = (e) => {
-            var transcript = e.results[0][0].transcript;
-            output.innerHTML = transcript;
-            if (field === 'subject') {
-                currentSubject = transcript;
-                textInput.value = currentSubject;
-            } else if (field === 'message') {
-                currentMessage = transcript;
-                textInput.value = currentMessage;
+          <div class="nav_bottom">
+            <span>Labels</span>
+            <ion-icon name="add" class="hover"></ion-icon>
+          </div>
+        </div>
+      </nav>
+      <main class="main_content">
+        <div class="top">
+          <div class="left">
+            <div class="check">
+              <img src="./img/checkbox.png" alt="" />
+              <span> <ion-icon name="checkmark"></ion-icon> </span>
+              <ion-icon name="caret-down-outline"></ion-icon>
+            </div>
+            <ion-icon
+              name="reload-outline"
+              class="hover content-icon"
+            ></ion-icon>
+            <ion-icon
+              name="ellipsis-vertical"
+              class="hover content-icon"
+            ></ion-icon>
+          </div>
+          <div class="right">
+            <div class="sort_numbers hover">1-50 of 94</div>
+            <ion-icon
+              name="chevron-back-outline"
+              class="chev content-icon"
+            ></ion-icon>
+            <ion-icon
+              name="chevron-forward-outline"
+              class="hover content-icon"
+            ></ion-icon>
+          </div>
+        </div>
+        <div class="messages_area">
+            <section class="home">
+               <!-- <div style = "top:40px;left:67px" class="text">
+                    <h5>Compose Mail</h5>
+                </div>-->
+                <div class="text">
+                    <div class="button-container">
+                        <button onclick="runSpeechRecog('reciever')">Speech for To</button>
+                        <button onclick="runSpeechRecog('subject')">Speech for Subject</button>
+                        <button onclick="runSpeechRecog('message')">Speech for Message</button>
+                    </div>
+                    <div class="modal-container">
+                        <div class="modal-content">
+                            <form name="emailForm" action="{{ url_for('email') }}" method="post" enctype="multipart/form-data">
+                                <div class="form-item">
+                                    <label class="formLabel" for="reciever"><h6>To</h6></label>
+                                    <input type="text" name="reciever" id="reciever" class="form-style" required oninput="getSuggestions(this.value)" />
+                                  <br> <h6 id="suggestions-container"></h6>
+                                </div>
+                                <div class="form-item">
+                                    <label class="formLabel" for="subject"><h6>Subject</h6></label>
+                                    <input type="text" name="subject" id="subject" class="form-style" required />
+                                </div>
+                                <div class="form-item">
+                                    <label class="formLabel" for="message"><h6>Message:</h6></label>
+                                    <textarea  name="message" id="message" rows= "4" class="form-style" required ></textarea>
+                                </div>
+                                <div class="form-item">
+                                    <label class="formLabel" for="image"><h6>Upload Image:</h6></label>
+                                    <input type="file" name="image" id="image" class="form-style" accept="image/*" />
+                                </div>
+                                <div class="form-item">
+                                    <button type="submit" class="send">Send</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <h3 id="output" class="hide"></h3>
+                </div>
+            </div>
+            </section>
+  
+            <script>
+            var currentSubject = "";
+            var currentMessage = "";
+            var currentReciever = "";
+  
+            // Function to get autocomplete suggestions
+            function getSuggestions(prefix) {
+                fetch('/autocomplete?prefix=' + prefix)
+                    .then(response => response.json())
+                    .then(data => {
+                        var suggestionsContainer = document.getElementById('suggestions-container');
+                        suggestionsContainer.innerHTML = ''; // Clear previous suggestions
+  
+                        // Display suggestions
+                        data.suggestions.forEach(suggestion => {
+                            var suggestionElement = document.createElement('div');
+                            suggestionElement.textContent = suggestion;
+                            suggestionElement.onclick = function() {
+                                document.getElementById('reciever').value = suggestion;
+                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
+                            };
+                            suggestionsContainer.appendChild(suggestionElement);
+                        });
+                    });
             }
-        }
-        recognition.start();
-        }
+  
+            runSpeechRecog = (field) => {
+                document.getElementById("output").innerHTML = "Listening...";
+                var output = document.getElementById('output');
+                var textInput = document.getElementById(field);
+                let recognition = new webkitSpeechRecognition();
+                recognition.onstart = () => {
+                    output.innerHTML = "Listening...";
+                }
+                recognition.onresult = (e) => {
+                    var transcript = e.results[0][0].transcript;
+                    output.innerHTML = transcript;
+  
+                    // Replace specific phrases with symbols
+                    transcript = transcript.replace(/at the rate/g, '@');
+                    transcript = transcript.replace(/question mark/g, '?');
+                    transcript = transcript.replace(/dot/g, '.');
+                    transcript = transcript.replace(/new line/g, '\n');
+  
+                    if (field === 'subject') {
+                        currentSubject = transcript;
+                        textInput.value = currentSubject;
+                    } else if (field === 'message') {
+                        currentMessage = transcript;
+                        textInput.value = currentMessage;
+                    }
+                    else if (field === 'reciever') {
+                        currentReciever = transcript;
+                        textInput.value = currentReciever;
+                    }
+                }
+                recognition.start();
+            }
+            </script>
+  
+            <!-- Script -->
+            <script src="{{ url_for('static', filename='userdash-script.js') }}"></script>  
+          <!-- <div class="messages">
+            <div class="messages_left">
+              <div class="check check_2">
+                <img src="./img/checkbox.png" alt="" />
+                <span> <ion-icon name="checkmark"></ion-icon> </span>
+              </div>
+              <ion-icon name="star-outline" class="hover star"></ion-icon>
+              <span>Twitter</span>
+            </div>
+            <div class="messages_content">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Voluptatum deleniti, eligendi vitae explicabo accusamus,
+              distinctio molestias a nisi tempore modi dolores debitis
+              laboriosam? Delectus laudantium, in minima sed eum consectetur!
+            </div>
+            <div class="messages_date">Dec,28</div>
+          </div> -->
 
-          </script>
-          <!-- Script -->
-          <!-- <script src="{{ url_for('static', filename='userdash-script.js') }}"></script>   -->
+        </div>
+      </main>
+      <aside>
+        <div class="aside_icons">
+          <img src="./img/calendar-48.png" alt="" class="hover" />
+          <img src="./img/keep-48.png" alt="" class="hover" />
+          <img src="./img/task-48.png" alt="" class="hover" />
+          <img src="./img/account-48.png" alt="" class="hover" />
+          <span></span>
+          <ion-icon name="add" class="hover"></ion-icon>
 
-<!-- </body>
-</html> -->
-          <!-- Email Row Ends -->
-          <!-- {% endfor %} -->
-        
+          <div>
+            <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+          </div>
+        </div>
+      </aside>
+    </section>
   </body>
 </html>
