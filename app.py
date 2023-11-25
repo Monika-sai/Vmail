@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, flash
 import mysql.connector as c1234
 import random
 import webbrowser
@@ -14,6 +14,12 @@ app = Flask(__name__)
 class Global:
     c = ""
     name = ""
+    length = 0
+    regName = ''
+    regPass = ''
+    regEmail = ''
+    regPhone = ''
+    otp = ''
 
 g = Global()
 con = c1234.connect(host="localhost", user="root",
@@ -40,14 +46,40 @@ def registration_sucessful(reciever):
         server.quit()
         print("Email sent successfully!")
     except Exception as e:
-        return render_template('error_page.html', error_message=str(e))
-
-def send_mail(sender, reciever, subject, msg, name):
+        return render_template('error_page.html',  error_message="An error occured" + str(e))
+    
+def sendOtpMail(reciever):
     sender_email = '20b01a05c6@svecw.edu.in'
     sender_password = 'hari@9RUSHI'  # Your email account password
     recipient_email = reciever
     smtp_server = 'smtp.gmail.com'  # SMTP server for Gmail
     # Create an email message
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = recipient_email
+    message['Subject'] = "Vmail : Thanks for your interest in Vmail" 
+    otp = ''
+    for i in range(6):
+        otp += str(random.randint(1, 9))
+    g.otp = otp
+    body = "Please use this otp to complete registration process" + g.otp
+    message.attach(MIMEText(body, 'plain'))
+    try:
+        server = smtplib.SMTP(smtp_server, 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, recipient_email, text)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        return render_template('error_page.html',  error_message="An error occured" + str(e))
+
+def send_mail(sender, reciever, subject, msg, name):
+    sender_email = '20b01a05c6@svecw.edu.in'
+    sender_password = 'hari@9RUSHI'  
+    recipient_email = reciever
+    smtp_server = 'smtp.gmail.com' 
     msg = msg.split(' ')[:2]
     msg = ' '.join(msg)
     message = MIMEMultipart()
@@ -117,14 +149,14 @@ def login():
 
 @app.route('/composeMail')
 def composeMail():
-    return render_template('compose.html')
+    return render_template('compose.html', message = g.length)
 
 
 @app.route('/ValidateAdmin', methods=['POST'])
 def ValidateAdmin():
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
-    query = "select * from admin1"
+    query = "select * from admin2"
     image_dir = 'temp_images'
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
@@ -262,7 +294,7 @@ def ValidateAdmin():
 
 @app.route('/inbox')
 def inbox():
-    query = "SELECT id, subject, text, sender, kys FROM admin1 WHERE receiver = '{}'".format(g.c)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC".format(g.c)
     cursor.execute(query)
     message = cursor.fetchall()
     subject = []
@@ -283,11 +315,17 @@ def inbox():
         k = keys[i]
         for i in subjectDecrypt:
             for j in i:
-                sub += chr((k.index(j) + 65))
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
             sub += ' '
         for i in textDecrypt:
             for j in i:
-                txt += chr((k.index(j) + 65))
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
             txt += ' '
         actualSub.append(sub)
         actualText.append(txt)
@@ -296,13 +334,15 @@ def inbox():
         a = []
         a.append(message[i][0])
         a.append(actualSub[i])
-        a.append(actualText[i])
+        a.append(actualText[i][:5])
         x = message[i][3].split('@')[0]
         x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
         a.append(x)
+        a.append(message[i][5])
         messages.append(a)
+    g.length = len(message)
 
-    return render_template('userDash.html', messages=messages)
+    return render_template('userDash.html', messages=messages, length = len(message))
 
 @app.route('/ValidateUser', methods=['POST'])
 def ValidateUser():
@@ -319,7 +359,7 @@ def ValidateUser():
         if i[0] == name1 and i[1] == passw:
             g.c = i[2]
             g.name = i[0]
-            query = "SELECT id, subject, text, sender, kys FROM admin1 WHERE receiver = '{}'".format(g.c)
+            query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC".format(g.c)
             cursor.execute(query)
             message = cursor.fetchall()
             subject = []
@@ -340,11 +380,17 @@ def ValidateUser():
                 k = keys[i]
                 for i in subjectDecrypt:
                     for j in i:
-                        sub += chr((k.index(j) + 65))
+                        try:
+                            sub += chr((k.index(j) + 65))
+                        except:
+                            sub += j
                     sub += ' '
                 for i in textDecrypt:
                     for j in i:
-                        txt += chr((k.index(j) + 65))
+                        try:
+                            txt += chr((k.index(j) + 65))
+                        except:
+                            txt += j
                     txt += ' '
                 actualSub.append(sub)
                 actualText.append(txt)
@@ -353,23 +399,82 @@ def ValidateUser():
                 a = []
                 a.append(message[i][0])
                 a.append(actualSub[i])
-                a.append(actualText[i])
+                a.append(actualText[i][:10])
                 a.append(message[i][3]) 
+                a.append(message[i][5])
                 messages.append(a)
 
-            return render_template('userDash.html', messages=messages)
+            g.length = len(message)
+            return render_template('userDash.html', messages=messages, length = len(message))
     
 
 @app.route('/message/<int:message_id>')
 def message(message_id):
-    # Fetch the selected message from the database
-    cursor.execute("SELECT subject, text FROM admin1 WHERE id = %s", (message_id,))
+    # Fetch the selected message from the database 
+    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data FROM admin2 WHERE id = %s", (message_id,))
     message = cursor.fetchone()
-    return render_template('message.html', message=message)
+    print(message)
+    message = list(message)
+    name = message[6]
+    image_data = message[7]
+    image_dir = 'static'
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+    key = message[5]
+    sub = ''
+    txt = ''
+    subjectDecrypt = message[0].split()
+    textDecrypt = message[1].split()
+    k = key
+    for i in subjectDecrypt:
+        for j in i:
+            try:
+                sub += chr((k.index(j) + 65))
+            except:
+                sub += j
+        sub += ' '
+    for i in textDecrypt:
+        for j in i:
+            try:
+                txt += chr((k.index(j) + 65))
+            except:
+                txt += j
+        txt += ' '
+    a4 = ''
+    if image_data != '' and name != '':
+        image_path = os.path.join(image_dir, name)
+        with open(image_path, 'wb') as img_file:
+            img_file.write(image_data)
+            
+        a4 = name
+        
+    message[0] = sub 
+    message[1] = txt
+    message[6] = a4
+    return render_template('message.html', message=message, length = g.length)
 
 @app.route('/Registration')
 def Registration():
     return render_template('registration.html')
+
+
+@app.route('/otp', methods=['POST'])
+def otp():
+    otp = request.form['otp']
+    print(otp, g.otp)
+    if otp == g.otp:
+        con = c1234.connect(host="localhost", user="root",
+                        passwd="hari@9RUSHI", database="vmail")
+        cursor = con.cursor()
+        registration_sucessful(g.regEmail)
+        mySql_insert_query = "INSERT INTO logindetails VALUES ('{}', '{}', '{}', '{}')".format(
+            g.regName, g.regPass, g.regEmail, g.regPhone)
+        cursor = con.cursor()
+        cursor.execute(mySql_insert_query)
+        con.commit()
+        return render_template('RegistrationSucess.html')
+    return render_template('invalidOtp.html')
+
 
 @app.route('/registerUser', methods=['POST'])
 def registerUser():
@@ -377,22 +482,20 @@ def registerUser():
     email1 = request.form['email']
     passw = request.form['password']
     phonenum = request.form['phonenum']
+    g.regName = name1 
+    g.regEmail = email1 
+    g.regPass = passw 
+    g.regPhone = phonenum
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
     query = "select * from logindetails where uname = '{}' or password = '{}' or email = '{}' or mobilenum = '{}'".format(name1, passw, email1, phonenum)
-    registration_sucessful(email1)
     cursor = con.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
     if len(records) >= 1:
-        return render_template('invalidRegistration.html')
-
-    mySql_insert_query = "INSERT INTO logindetails VALUES ('{}', '{}', '{}', '{}')".format(
-        name1, passw, email1, phonenum)
-    cursor = con.cursor()
-    cursor.execute(mySql_insert_query)
-    con.commit()
-    return render_template('RegistrationSucess.html')
+        return render_template('error_page.html', error_message= "An error occured" + "user name or password exist") 
+    sendOtpMail(email1)
+    return render_template('otp.html')
 
 @app.route('/correct', methods=['POST'])
 def correct_text():
@@ -417,7 +520,7 @@ def email():
     records = cursor.fetchall()
     print(len(records))
     if len(records) == 0:
-        return render_template('error_page.html', error_message="Please check the mail id")
+        return render_template('error_page.html', error_message=  "An error occured" + "Please check the mail id")
     
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
@@ -441,13 +544,20 @@ def email():
     encryptedSub = ''
     for i in subject:
         for j in i:
-            encryptedSub += hm[j]
+            if j in key:
+                encryptedSub += hm[j]
+            else:
+                encryptedSub += j
+
         encryptedSub += " "
     encryptedMessage = ''
     message = message.split()
     for i in message:
         for j in i:
-            encryptedMessage += hm[j]
+            try:
+                encryptedMessage += hm[j]
+            except:
+                encryptedMessage += j
         encryptedMessage += " "
     image_data, image_name = '', ''
     if image:
@@ -455,7 +565,7 @@ def email():
         image_data = image.read()
         image_name = image.filename
 
-    mySql_insert_query = "INSERT INTO admin1 (sender, subject, text, kys, receiver, name, image_data) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data)
 
     cursor = con.cursor()
@@ -527,13 +637,13 @@ def SendMail():
         a.append(message[i][3]) 
         messages.append(a)
 
-    return render_template('sentMail.html', messages=messages)
+    return render_template('sentMail.html', messages=messages, length = g.length)
 
 @app.route('/RecievedMail')
 def RecievedMail():
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
-    query = "select sender, subject, text, kys, receiver, name, image_data from admin1"
+    query = "select sender, subject, text, kys, receiver, name, image_data from admin2 ORDER BY timestamp_value DESC"
     cursor = con.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
@@ -665,5 +775,6 @@ def RecievedMail():
     webbrowser.open(filename)
     return render_template('demo3.html')
 
+app.secret_key = 'secret123'
 app.run(debug=True)
 
