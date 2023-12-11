@@ -38,12 +38,12 @@ def registration_sucessful(reciever):
     body = "Your account have been created please login"
     message.attach(MIMEText(body, 'plain'))
     try:
-        server = smtplib.SMTP(smtp_server, 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        text = message.as_string()
-        server.sendmail(sender_email, recipient_email, text)
-        server.quit()
+        server = smtplib.SMTP(smtp_server, 587) # Creating an SMTP (Simple Mail Transfer Protocol) server instance
+        server.starttls() # Initiating a secure connection using Transport Layer Security (TLS)
+        server.login(sender_email, sender_password) # Logging into the email account on the SMTP server
+        text = message.as_string() # Converting the email message to a string
+        server.sendmail(sender_email, recipient_email, text) # Sending the email
+        server.quit() # Closing the connection to the SMTP server
         print("Email sent successfully!")
     except Exception as e:
         return render_template('error_page.html',  error_message="An error occured" + str(e))
@@ -451,6 +451,7 @@ def message(message_id):
     message[0] = sub 
     message[1] = txt
     message[6] = a4
+    print(message[:len(message) - 1])
     return render_template('message.html', message=message, length = g.length)
 
 @app.route('/Registration')
@@ -596,10 +597,7 @@ def upload_image():
 
 @app.route('/SendMail')
 def SendMail():
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
-    cursor = con.cursor()
-    query = "SELECT id, subject, text, receiver, kys FROM admin1 WHERE sender = '{}'".format(g.c)
+    query = "SELECT id, subject, text, receiver, kys, timestamp_value FROM admin2 WHERE sender = '{}' ORDER BY timestamp_value DESC".format(g.c)
     cursor.execute(query)
     message = cursor.fetchall()
     subject = []
@@ -620,11 +618,17 @@ def SendMail():
         k = keys[i]
         for i in subjectDecrypt:
             for j in i:
-                sub += chr((k.index(j) + 65))
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
             sub += ' '
         for i in textDecrypt:
             for j in i:
-                txt += chr((k.index(j) + 65))
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
             txt += ' '
         actualSub.append(sub)
         actualText.append(txt)
@@ -633,8 +637,11 @@ def SendMail():
         a = []
         a.append(message[i][0])
         a.append(actualSub[i])
-        a.append(actualText[i])
-        a.append(message[i][3]) 
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
         messages.append(a)
 
     return render_template('sentMail.html', messages=messages, length = g.length)
