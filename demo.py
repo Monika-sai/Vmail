@@ -1,33 +1,28 @@
-from flask import Flask, render_template, request, jsonify
-import mysql.connector as c1234
-import random
-import webbrowser
-import random
-import language_tool_python  
-import os 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from flask import Flask, render_template, request, redirect, url_for
+from gtts import gTTS
+import os
+
 app = Flask(__name__)
 
-# MySQL Database Configuration
-con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
-cursor = con.cursor()
+def text_to_speech(text, language='en', output_file='static/output.mp3'):
+    # Create a gTTS object
+    tts = gTTS(text=text, lang=language, slow=False)
+
+    # Save the audio file
+    tts.save(output_file)
+
+    return output_file
 
 @app.route('/')
 def index():
-    # Fetch all messages from the database
-    cursor.execute("SELECT id, subject, text, sender FROM admin1")
-    messages = cursor.fetchall()
-    return render_template('inbox.html', messages=messages)
+    return render_template('textToVoice.html')
 
-@app.route('/message/<int:message_id>')
-def message(message_id):
-    # Fetch the selected message from the database
-    cursor.execute("SELECT subject, text FROM admin1 WHERE id = %s", (message_id,))
-    message = cursor.fetchone()
-    return render_template('message.html', message=message)
+@app.route('/convert', methods=['POST'])
+def convert():
+    if request.method == 'POST':
+        text = request.form['text']
+        output_file = text_to_speech(text)
+        return render_template('textToVoice.html', audio_file=output_file)
 
 if __name__ == '__main__':
     app.run(debug=True)

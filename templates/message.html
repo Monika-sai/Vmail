@@ -677,11 +677,16 @@ button.send:hover {
                     <p>{{ message[1] }}</p>
 
                     <br>
-                    <img src="{{ url_for('static', filename=message[5]) }}" alt="Image">
-        <br>
-        <a href="{{ url_for('static', filename=message[5]) }}" download>
-            <button type="button">Download Image</button>
-        </a>
+                    <form action="{{ url_for('convert') }}" method="post">
+                      <button type="submit">Convert to Speech</button>
+                  </form>
+                  {% if audio_file %}
+                  <audio controls>
+                      <source src="{{ audio_file }}" type="audio/mp3">
+                      Your browser does not support the audio tag.
+                  </audio>
+              {% endif %}
+
                 </div>
                <!-- <div style = "top:40px;left:67px" class="text">
                     <h5>Compose Mail</h5>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Converter</title>
+</head>
+<body>
+    <h1>Text-to-Speech Converter</h1>
+    
+    <form action="{{ url_for('convert') }}" method="post">
+        <label for="text">Enter text:</label>
+        <textarea id="text" name="text" rows="4" cols="50" required></textarea>
+        <br>
+        <button type="submit">Convert to Speech</button>
+    </form>
+    
+    {% if audio_file %}
+        <audio controls>
+            <source src="{{ audio_file }}" type="audio/mp3">
+            Your browser does not support the audio tag.
+        </audio>
+    {% endif %}
+</body>
+</html>

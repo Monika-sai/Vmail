@@ -8,6 +8,8 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from gtts import gTTS
+import os
 
 app = Flask(__name__)
 
@@ -20,6 +22,8 @@ class Global:
     regEmail = ''
     regPhone = ''
     otp = ''
+    message = ''
+    msgs = ''
 
 g = Global()
 con = c1234.connect(host="localhost", user="root",
@@ -452,7 +456,25 @@ def message(message_id):
     message[1] = txt
     message[6] = a4
     print(message[:len(message) - 1])
+    g.message = txt
+    g.msgs = message 
     return render_template('message.html', message=message, length = g.length)
+
+def text_to_speech(text, language='en', output_file='static/output.mp3'):
+    # Create a gTTS object
+    tts = gTTS(text=text, lang=language, slow=False)
+
+    # Save the audio file
+    tts.save(output_file)
+
+    return output_file
+
+@app.route('/convert', methods=['POST'])
+def convert():
+    if request.method == 'POST':
+        text = g.message
+        output_file = text_to_speech(text)
+        return render_template('message.html', message=g.msgs, length = g.length, audio_file=output_file)
 
 @app.route('/Registration')
 def Registration():
@@ -784,4 +806,3 @@ def RecievedMail():
 
 app.secret_key = 'secret123'
 app.run(debug=True)
-
