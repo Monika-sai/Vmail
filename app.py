@@ -8,8 +8,9 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from gtts import gTTS
+#from gtts import gTTS
 import os
+import spam_model
 
 app = Flask(__name__)
 
@@ -29,6 +30,21 @@ g = Global()
 con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
 cursor = con.cursor()
+
+def spam_filter(email):
+    # Vectorize the email text
+    vectorizer, model = spam_model.load_data()
+    vectorized_email = vectorizer.transform([email])
+
+    # Make a prediction on the email
+    prediction = model.predict(vectorized_email)
+
+    if prediction[0] == 1:
+        return 1
+    else:
+        return 0
+
+
 def registration_sucessful(reciever):
     sender_email = '20b01a05c6@svecw.edu.in'
     sender_password = 'hari@9RUSHI'  # Your email account password
@@ -296,6 +312,58 @@ def ValidateAdmin():
     webbrowser.open(filename)
     return render_template('demo3.html')
 
+@app.route('/Spam')
+def Spam():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND spam = 1 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+    g.length = len(message)
+
+    return render_template('spam.html', messages=messages, length = len(message))
+
 @app.route('/inbox')
 def inbox():
     query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC".format(g.c)
@@ -549,6 +617,7 @@ def email():
                         passwd="hari@9RUSHI", database="vmail")
     subject = grammarCorrection(subject)
     message = grammarCorrection(message)
+    spam = spam_filter(message)
     send_mail(sender, reciever, subject, message, g.name)
     subject = subject.upper()
     message = message.upper()
@@ -588,8 +657,8 @@ def email():
         image_data = image.read()
         image_name = image.filename
 
-    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data)
+    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data, spam) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data, spam)
 
     cursor = con.cursor()
     cursor.execute(mySql_insert_query, values)

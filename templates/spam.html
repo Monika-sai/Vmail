@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VMail</title>
+    <link rel="icon" type="image/x-icon" href="./img/logo-64.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/media.css" />
+    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+    <script defer src="./script.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+
+
+.home {
+position: relative;
+height: 100vh;
+left: 250px;
+width: calc(100% - 250px);
+transition: var(--tran-05);
+}
+
+.home .text {
+font-weight: 500;
+font-size: 30px;
+color: var(--text-color);
+padding: 8px 40px;
+position: absolute;
+}
+
+.button-container {
+margin-top:100px;
+display: flex;
+justify-content: space-between;
+width: 27rem;
+box-shadow: 0 0 13px #0000003d;
+border-radius: 5px;
+margin: 0 auto; /* Center the container horizontally */
+padding: 1rem; /* Add some padding to create space between buttons and the container */
+}
+
+/* Styles for the buttons */
+.button-container button {
+padding: 0.75rem;
+border: none;
+background-color: #695cfe; 
+color: #fff; 
+border-radius: 5px;
+cursor: pointer;
+}
+
+.button-container button:hover {
+background-color: #958bff;
+}
+.modal-container { 
+position: relative;
+top: 20px;
+
+bottom: 10px;
+width: 225%;
+height: 100%;
+justify-content: center;
+align-items: center;
+z-index: 0;
+}
+
+.modal-content {
+background: #fff;
+border-radius: 5px;
+padding: 20px;
+width: 45%;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Style labels to be on top of inputs */
+.formLabel {
+font-weight: bold;
+color: #333;
+font-size: 24px;
+}
+
+/* Style text inputs */
+.form-style {
+width: 100%;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+margin-bottom: 5px;
+}
+/* Style the button */
+button.send {
+background-color: #695cfe;
+color: #fff;
+padding: 10px 20px;
+text-align: center;
+border: none;
+margin-left: 40%;
+border-radius: 5px;
+cursor: pointer;
+height: 40px;
+width:100px;
+}
+
+/* Hover effect for the button */
+button.send:hover {
+background-color: #958bff;
+}
+@media only screen and (max-width: 600px) {
+  section {
+    display: none;
+  }
+
+  body::after {
+    content: "WE ARE MAKING RESPONSIVE STAY TUNE 😉";
+    background-color: blueviolet;
+    color: orange;
+    height: 100vh;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 16px;
+  }
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --light-gray: #f8f9fa;
+  --middle-gray: #e9ecef;
+  --dark-gray: #495057;
+  --light-blue: #d0ebff;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f6f8fc;
+  overflow: hidden;
+}
+
+section {
+  height: 100vh;
+  display: grid;
+  grid-template-areas: "header header header" "nav main-content sidebar" "nav main-content sidebar";
+  grid-template-columns: 265px 4fr 60px;
+  grid-template-rows: 70px 1fr;
+}
+
+header,
+aside,
+footer,
+nav {
+  padding: 20px;
+}
+
+header {
+  grid-area: header;
+}
+nav {
+  grid-area: nav;
+}
+main {
+  grid-area: main-content;
+}
+aside {
+  grid-area: sidebar;
+}
+
+footer {
+  grid-area: footer;
+}
+
+.flex {
+  display: flex;
+  justify-content: Normal;
+  align-items: center;
+  gap: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--dark-gray);
+}
+
+ion-icon {
+  cursor: pointer;
+}
+
+.hover:hover {
+  transition: all 0.3s;
+  background-color: #d8dbdd;
+  cursor: pointer;
+}
+
+.header {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-area img:hover {
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.menu .icon {
+  height: 2px;
+  width: 20px;
+  background-color: #464f58;
+  margin: 2px 0;
+}
+
+.mail-text {
+  font-size: 20px;
+  letter-spacing: 0.7px;
+  color: var(--dark-gray);
+}
+
+.mail-text:hover {
+  cursor: pointer;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px;
+  border-radius: 10px;
+  background-color: var(--middle-gray);
+}
+
+.search ion-icon {
+  height: 24px;
+  width: 24px;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.search input {
+  border: none;
+  outline: none;
+  background-color: var(--middle-gray);
+  padding: 2px;
+  font-size: 18px;
+}
+
+.left-area {
+  flex: 1;
+}
+
+.middle-area {
+  flex: 3;
+}
+
+.right-area {
+  flex: 1;
+  padding: 10px;
+  gap: 10px;
+}
+
+.right-area ion-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.right-area img {
+  border-radius: 50%;
+  height: 36px;
+  object-fit: contain;
+}
+
+.right-area img:hover {
+  cursor: pointer;
+}
+
+.nav_container {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  margin-left: -20px;
+  padding: 12px;
+  gap: 40px;
+}
+
+.nav_top span {
+  width: 75%;
+  background-color: var(--light-blue);
+  padding: 20px 32px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav_top span ion-icon {
+  font-size: 24px;
+}
+
+.nav_middle ul li {
+  font-size: 14px;
+  list-style: none;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  padding: 8px;
+}
+
+.nav_middle ul li a {
+  display: flex;
+  gap: 12px;
+  letter-spacing: 1px;
+}
+
+.nav_middle ul li a ion-icon,
+.nav_bottom ion-icon {
+  width: 18px;
+  height: 18px;
+}
+
+ul li:last-child {
+  margin-bottom: 0;
+}
+
+.nav_middle ul li:first-child {
+  display: flex;
+  justify-content: space-between;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #e7f5ff;
+}
+
+.nav_middle ul li:first-child span {
+  margin-right: 8px;
+}
+
+.nav_middle ul li:first-child a,
+.nav_middle ul li:first-child span {
+  font-weight: 600;
+  color: #000;
+}
+
+.nav_middle ul li:hover {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #e7f5ff;
+}
+
+.nav_bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav_bottom ion-icon {
+  transition: all 0.3s;
+  width: 20px;
+  height: 20px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.main_content {
+  margin-top: 5px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  background-color: var(--middle-gray);
+  overflow: hidden;
+}
+
+.content-icon,
+.star {
+  transition: all 0.3s;
+  width: 16px;
+  height: 16px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.chev {
+  color: #b1b1b1;
+}
+
+.main_content .top {
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #fff;
+  color: var(--dark-gray);
+}
+
+.messages:hover {
+  cursor: pointer;
+  box-shadow: 0px 1px 4px 0.2px rgba(0, 0, 0, 0.2);
+}
+
+.check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.check img {
+  height: 24px;
+  cursor: pointer;
+}
+
+.check span {
+  position: absolute;
+  left: 6px;
+  top: 4px;
+  display: none;
+}
+
+.check img:hover + span {
+  transition: all 0.3s;
+  display: inline;
+}
+
+.sort_numbers {
+  transition: all 0.3s;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.main_content .top .right,
+.main_content .top .left,
+.main_content .messages .messages_left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.messages_area {
+  height: 80vh;
+  overflow: auto;
+}
+
+.messages {
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 0.8px solid #ced4da;
+  color: var(--dark-gray);
+}
+
+.check_2 span {
+  position: absolute;
+  left: 5px;
+}
+
+.messages_left ion-icon:hover {
+  color: #000;
+}
+
+.aside_icons {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.aside_icons img {
+  transition: all 0.3s;
+  height: 40px;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.aside_icons span {
+  height: 2px;
+  width: 100%;
+  border-radius: 10px;
+  background-color: var(--middle-gray);
+}
+
+.aside_icons ion-icon {
+  transition: all 0.3s;
+  width: 20px;
+  height: 20px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.aside_icons div:last-child {
+  margin-top: auto;
+}
+
+  </style>
+  </head>
+  <body>
+    <section>
+      <header class="header">
+        <div class="left-area flex">
+          <div class="menu hover">
+            <span class="icon"></span>
+            <span class="icon"></span>
+            <span class="icon"></span>
+          </div>
+          <img src="{{url_for('static', filename='googlelogo.png')}}" alt="logo" style="height:50px;width:80px" />
+        </div>
+        <div class="middle-area">
+          <div class="search">
+            <ion-icon name="search-outline" class="hover"></ion-icon>
+            <input type="search" placeholder="Search mail" />
+          </div>
+        </div>
+        <div class="right-area flex">
+          <ion-icon name="help-circle-outline" class="hover"></ion-icon>
+          <ion-icon name="settings-outline" class="hover"></ion-icon>
+          <ion-icon name="apps" class="hover"></ion-icon>
+          <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
+        </div>
+      </header>
+      <nav>
+        <div class="nav_container">
+          <div class="nav_top">
+            <a href="{{ url_for('composeMail') }}"><span> <ion-icon name="pencil"></ion-icon> Compose</span></a>
+          </div>
+          <div class="nav_middle">
+            <ul>
+              <li>
+                <a href="{{ url_for('inbox') }}">
+                  <ion-icon name="image-outline"></ion-icon>
+                  Inbox
+                </a>
+                <span>{{ length }}</span>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="star-outline"></ion-icon>
+                  Starred
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('Spam') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Spam
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('SendMail') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Sent
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="document-outline"></ion-icon>
+                  Draft
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <ion-icon name="chevron-down-outline"></ion-icon>
+                  More
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="nav_bottom">
+            <span>Labels</span>
+            <ion-icon name="add" class="hover"></ion-icon>
+          </div>
+        </div>
+      </nav>
+      <main class="main_content">
+        <div class="top">
+          <div class="left">
+            <div class="check">
+              <img src="./img/checkbox.png" alt="" />
+              <span> <ion-icon name="checkmark"></ion-icon> </span>
+              <ion-icon name="caret-down-outline"></ion-icon>
+            </div>
+            <ion-icon
+              name="reload-outline"
+              class="hover content-icon"
+            ></ion-icon>
+            <ion-icon
+              name="ellipsis-vertical"
+              class="hover content-icon"
+            ></ion-icon>
+          </div>
+          <div class="right">
+            <div class="sort_numbers hover">1-50 of 94</div>
+            <ion-icon
+              name="chevron-back-outline"
+              class="chev content-icon"
+            ></ion-icon>
+            <ion-icon
+              name="chevron-forward-outline"
+              class="hover content-icon"
+            ></ion-icon>
+          </div>
+        </div>
+        <div class="messages_area">
+          {% for messag in messages %}
+           <div class="messages">
+            <div class="messages_left">
+              <div class="check check_2">
+                <img src="./img/checkbox.png" alt="" />
+                <span> <ion-icon name="checkmark"></ion-icon> </span>
+              </div>
+              <ion-icon name="star-outline" class="hover star"></ion-icon>
+              <span>{{ messag[3].split('@')[0]}}</span>
+            </div>
+            
+            <div class="messages_content">
+              <a href="{{ url_for('message', message_id=messag[0]) }}">
+                {{ messag[1] }} : {{ messag[2] }}
+              
+            </div>
+            <div class="messages_date">{{ messag[4] }}</div>
+          </div> 
+          {% endfor %}
+
+        </div>
+      </main>
+      <aside>
+        <div class="aside_icons">
+          <img src="./img/calendar-48.png" alt="" class="hover" />
+          <img src="./img/keep-48.png" alt="" class="hover" />
+          <img src="./img/task-48.png" alt="" class="hover" />
+          <img src="./img/account-48.png" alt="" class="hover" />
+          <span></span>
+          <ion-icon name="add" class="hover"></ion-icon>
+
+          <div>
+            <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </body>
+</html>
