@@ -612,15 +612,16 @@ ul li:last-child {
             ></ion-icon>
           </div>
           <div class="right">
-            <div class="sort_numbers hover">1-50 of 94</div>
-            <ion-icon
-              name="chevron-back-outline"
-              class="chev content-icon"
-            ></ion-icon>
-            <ion-icon
-              name="chevron-forward-outline"
-              class="hover content-icon"
-            ></ion-icon>
+            <div class="sort_numbers hover"></div>
+  
+            {% if page_number > 1 %}
+            <a href="/SentMailss?page={{ page_number - 1 }}">&#9665; Previous</a>
+        {% endif %}
+        <p>{{((page_number - 1) * 3) + 1}} - {{((page_number) * 3)}} of {{ length1 }}</p>
+            {% if has_next_page %}
+            <a href="/SentMailss?page={{ page_number + 1 }}">Next &#9655;</a>
+        {% endif %}
+             
           </div>
         </div>
         <div class="messages_area">

@@ -26,23 +26,13 @@ cursor = con.cursor()
 @app.route('/')
 def display_email():
     page_number = int(request.args.get('page', 1))
-
-    # Set the number of emails to display per page
     emails_per_page = 3
-
-    # Calculate the offset based on the page number
     offset = (page_number - 1) * emails_per_page
-
-    # Query the database for emails
     cursor.execute(f"select email from logindetails LIMIT {emails_per_page} OFFSET {offset}")
     emails = cursor.fetchall()
-
-    # Check if there are more emails to determine if next page is needed
     cursor.execute(f"SELECT COUNT(*) FROM logindetails")
     total_emails = cursor.fetchone()[0]
     has_next_page = offset + emails_per_page < total_emails
-
-    # Render the HTML template with the retrieved emails and pagination information
     return render_template('inbox.html', emails=emails, page_number=page_number, has_next_page=has_next_page)
 
 

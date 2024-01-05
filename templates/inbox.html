@@ -19,6 +19,14 @@
         <p>{{ email[0] }}</p>
     {% endfor %}
 
-    
+    <div class="pagination">
+        {% if page_number > 1 %}
+            <a href="/emails?page={{ page_number - 1 }}">&#9665; Previous</a>
+        {% endif %}
+
+        {% if has_next_page %}
+            <a href="/emails?page={{ page_number + 1 }}">Next &#9655;</a>
+        {% endif %}
+    </div>
 </body>
 </html>
