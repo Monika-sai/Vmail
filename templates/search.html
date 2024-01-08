@@ -516,6 +516,13 @@ ul li:last-child {
   margin-top: auto;
 }
 
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+
   </style>
   </head>
   <body>
@@ -533,7 +540,7 @@ ul li:last-child {
           
           <div class="search">
             <ion-icon name="search-outline" class="hover"></ion-icon>
-            <form action="/SentSearch" method="post">
+            <form action="/search" method="post">
               <input type="text" name="search" placeholder="Search...">
               <button type="submit">Search</button>
             </form>
@@ -567,21 +574,15 @@ ul li:last-child {
                 </a>
               </li>
               <li>
-                <a href="#">
-                  <ion-icon name="time-outline"></ion-icon>
-                  Snoozed
+                <a href="{{ url_for('Spam') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Spam
                 </a>
               </li>
               <li>
                 <a href="{{ url_for('SendMail') }}">
                   <ion-icon name="send-outline"></ion-icon>
                   Sent
-                </a>
-              </li>
-              <li>
-                <a href="{{ url_for('Spam') }}">
-                  <ion-icon name="send-outline"></ion-icon>
-                  Spam
                 </a>
               </li>
               <li>
@@ -623,54 +624,61 @@ ul li:last-child {
           </div>
           <div class="right">
             <div class="sort_numbers hover"></div>
-  
+  <!--
             {% if page_number > 1 %}
-            <a href="/SentMailss?page={{ page_number - 1 }}">&#9665; Previous</a>
+            <a href="/ValidateUsers?page={{ page_number - 1 }}">&#9665; Previous</a>
         {% endif %}
-        <p>{{((page_number - 1) * 3) + 1}} - {{((page_number) * 3)}} of {{ length1 }}</p>
+
+        <p>{{((page_number - 1) * 3) + 1}} - {{((page_number) * 3)}} of {{ length }}</p>
+            
             {% if has_next_page %}
-            <a href="/SentMailss?page={{ page_number + 1 }}">Next &#9655;</a>
+            <a href="/ValidateUsers?page={{ page_number + 1 }}">Next &#9655;</a>
         {% endif %}
+        -->
              
           </div>
         </div>
-        <div class="messages_area">
-          {% for messag in messages %}
-           <div class="messages">
-            <div class="messages_left">
-              <div class="check check_2">
-                <img src="./img/checkbox.png" alt="" />
-                <span> <ion-icon name="checkmark"></ion-icon> </span>
-              </div>
-              <ion-icon name="star-outline" class="hover star"></ion-icon>
-              <span>{{ messag[3].split('@')[0]}}</span>
-            </div>
-            
-            <div class="messages_content">
-              <a href="{{ url_for('message', message_id=messag[0]) }}">
-                {{ messag[1] }} : {{ messag[2] }}
-              
-            </div>
-            <div class="messages_date">{{ messag[4] }}</div>
-          </div> 
-          {% endfor %}
+        {% if search_term %}
+        <p>Search results for "{{ search_term }}":</p>
+    {% endif %}
 
-        </div>
-      </main>
-      <aside>
-        <div class="aside_icons">
-          <img src="./img/calendar-48.png" alt="" class="hover" />
-          <img src="./img/keep-48.png" alt="" class="hover" />
-          <img src="./img/task-48.png" alt="" class="hover" />
-          <img src="./img/account-48.png" alt="" class="hover" />
-          <span></span>
-          <ion-icon name="add" class="hover"></ion-icon>
-
-          <div>
-            <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+    <ul>
+        {% for email in emails %}
+        <div class="messages">
+          <div class="messages_left">
+            <div class="check check_2">
+              <img src="./img/checkbox.png" alt="" />
+              <span> <ion-icon name="checkmark"></ion-icon> </span>
+            </div>
+            <ion-icon name="star-outline" class="hover star"></ion-icon>
+            <span>{{ email[3]}}</span>
           </div>
-        </div>
-      </aside>
-    </section>
-  </body>
+          
+          <div class="messages_content">
+            <a href="{{ url_for('message', message_id=email[0]) }}">
+              {{ email[1] }} : {{ email[2] }}
+            
+          </div>
+    
+        </div> 
+
+        {% endfor %}
+    </ul>
+</main>
+<aside>
+  <div class="aside_icons">
+    <img src="./img/calendar-48.png" alt="" class="hover" />
+    <img src="./img/keep-48.png" alt="" class="hover" />
+    <img src="./img/task-48.png" alt="" class="hover" />
+    <img src="./img/account-48.png" alt="" class="hover" />
+    <span></span>
+    <ion-icon name="add" class="hover"></ion-icon>
+
+    <div>
+      <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+    </div>
+  </div>
+</aside>
+</section>
+</body>
 </html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Inbox</title>
+</head>
+<body>
+    <h1>Email Inbox</h1>
+
+    <form action="/search" method="post">
+        <input type="text" name="search" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if search_term %}
+        <p>Search results for "{{ search_term }}":</p>
+    {% endif %}
+
+    <ul>
+        {% for email in emails %}
+            <li><a href="{{ url_for('view_email', email_id=email[0]) }}">{{ email[1] }} - {{ email[2] }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

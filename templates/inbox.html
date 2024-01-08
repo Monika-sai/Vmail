@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emails</title>
-    <style>
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-    </style>
+    <title>Vmail App</title>
 </head>
 <body>
-    <h1>Emails</h1>
-
-    {% for email in emails %}
-        <p>{{ email[0] }}</p>
-    {% endfor %}
-
-    <div class="pagination">
-        {% if page_number > 1 %}
-            <a href="/emails?page={{ page_number - 1 }}">&#9665; Previous</a>
+    <h1>Vmail App</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
+    {% endwith %}
 
-        {% if has_next_page %}
-            <a href="/emails?page={{ page_number + 1 }}">Next &#9655;</a>
-        {% endif %}
-    </div>
+    <form action="{{ url_for('send_message_route') }}" method="post">
+        <label for="sender">Sender:</label>
+        <input type="text" name="sender" required><br>
+
+        <label for="recipient">Recipient:</label>
+        <input type="text" name="recipient" required><br>
+
+        <label for="subject">Subject:</label>
+        <input type="text" name="subject" required><br>
+
+        <label for="body">Body:</label>
+        <textarea name="body" required></textarea><br>
+
+        <button type="submit">Send Message</button>
+    </form>
+
+    <a href="{{ url_for('view_messages') }}">View Messages</a>
 </body>
 </html>

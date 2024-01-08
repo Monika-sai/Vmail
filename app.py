@@ -32,6 +32,163 @@ con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
 cursor = con.cursor()
 
+def create_table():
+    # Check if the table already exists and drop it if it does
+    cursor.execute("DROP TABLE IF EXISTS emails")
+    
+    # Create the 'emails' table
+    cursor.execute("""
+        CREATE TABLE emails (
+            id INT,
+            sender VARCHAR(455),
+            subject VARCHAR(455),
+            message VARCHAR(455)
+        )
+    """)
+    con.commit()
+
+def insert_email(id, sender, subject, message):
+    # Insert a new email into the 'emails' table
+    cursor.execute("INSERT INTO emails (id, sender, subject, message) VALUES (%s, %s, %s, %s)", (id, sender, subject, message))
+    con.commit()
+
+
+@app.route('/SentSearch', methods=['POST'])
+def SentSearch():
+    # Get the search term from the form
+    search_term = request.form['search']
+
+    query = "SELECT id, subject, text, receiver, kys, timestamp_value FROM admin2 WHERE sender = '{}'".format(g.c)
+    create_table()
+    cursor = con.cursor()
+    cursor.execute(query)
+    message = cursor.fetchall()
+    print(message)
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        insert_email(message[i][0], x, actualSub[i], actualText[i])
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+    
+    # Search for emails containing the search term in sender, subject, or message
+    cursor.execute("SELECT id, sender, subject FROM emails WHERE sender LIKE %s OR subject LIKE %s OR message LIKE %s",
+                   (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
+    search_results = cursor.fetchall()
+    
+    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
+
+
+@app.route('/search', methods=['POST'])
+def search():
+    # Get the search term from the form
+    search_term = request.form['search']
+
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}'".format(g.c)
+    create_table()
+    cursor = con.cursor()
+    cursor.execute(query)
+    message = cursor.fetchall()
+    print(message)
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        insert_email(message[i][0], x, actualSub[i], actualText[i])
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+    
+    # Search for emails containing the search term in sender, subject, or message
+    cursor.execute("SELECT id, sender, subject FROM emails WHERE sender LIKE %s OR subject LIKE %s OR message LIKE %s",
+                   (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
+    search_results = cursor.fetchall()
+    
+    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
+
+@app.route('/email/<int:email_id>')
+def view_email(email_id):
+    # Fetch the details of the selected email
+    cursor.execute("SELECT * FROM emails WHERE id = %s", (email_id,))
+    email = cursor.fetchone()
+    
+    return render_template('email.html', email=email)
+
+
 def spam_filter(email):
     # Vectorize the email text
     vectorizer, model = spam_model.load_data()
@@ -1048,3 +1205,4 @@ def RecievedMail():
 
 app.secret_key = 'secret123'
 app.run(debug=True)
+

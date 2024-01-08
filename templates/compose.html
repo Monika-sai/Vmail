@@ -534,7 +534,10 @@ button.send:hover {
         <div class="middle-area">
           <div class="search">
             <ion-icon name="search-outline" class="hover"></ion-icon>
-            <input type="search" placeholder="Search mail" />
+            <form action="/search" method="post">
+              <input type="text" name="search" placeholder="Search...">
+              <button type="submit">Search</button>
+            </form>
           </div>
         </div>
         <div class="right-area flex">
@@ -575,6 +578,12 @@ button.send:hover {
                 <a href="{{ url_for('SendMail') }}">
                   <ion-icon name="send-outline"></ion-icon>
                   Sent
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('Spam') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Spam
                 </a>
               </li>
               <li>
