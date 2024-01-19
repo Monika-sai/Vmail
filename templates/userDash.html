@@ -542,7 +542,7 @@ ul li:last-child {
             <ion-icon name="search-outline" class="hover"></ion-icon>
             <form action="/search" method="post">
               <input type="text" name="search" placeholder="Search...">
-              <button type="submit">Search</button>
+              <button type="submit"></button>
             </form>
           </div>
         </div>
@@ -575,7 +575,7 @@ ul li:last-child {
               </li>
               <li>
                 <a href="{{ url_for('Spam') }}">
-                  <ion-icon name="send-outline"></ion-icon>
+                  <ion-icon name="alert-circle-outline"></ion-icon>
                   Spam
                 </a>
               </li>
@@ -592,7 +592,7 @@ ul li:last-child {
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="{{ url_for('more') }}">
                   <ion-icon name="chevron-down-outline"></ion-icon>
                   More
                 </a>

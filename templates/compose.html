@@ -536,7 +536,7 @@ button.send:hover {
             <ion-icon name="search-outline" class="hover"></ion-icon>
             <form action="/search" method="post">
               <input type="text" name="search" placeholder="Search...">
-              <button type="submit">Search</button>
+              <button type="submit"></button>
             </form>
           </div>
         </div>
@@ -568,12 +568,12 @@ button.send:hover {
                   Starred
                 </a>
               </li>
-              <li>
+              <!-- <li>
                 <a href="#">
                   <ion-icon name="time-outline"></ion-icon>
                   Snoozed
                 </a>
-              </li>
+              </li> -->
               <li>
                 <a href="{{ url_for('SendMail') }}">
                   <ion-icon name="send-outline"></ion-icon>
@@ -582,7 +582,7 @@ button.send:hover {
               </li>
               <li>
                 <a href="{{ url_for('Spam') }}">
-                  <ion-icon name="send-outline"></ion-icon>
+                  <ion-icon name="alert-circle-outline"></ion-icon>
                   Spam
                 </a>
               </li>

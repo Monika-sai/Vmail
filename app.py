@@ -305,9 +305,74 @@ def grammarCorrection(text):
 def index():
     return render_template('registration.html')
 
+@app.route('/less')
+def less():
+    query = "select * from logindetails"
+    cursor = con.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    print(records)
+    page_number = int(request.args.get('page', 2))
+    emails_per_page = 3
+    offset = (page_number - 1) * emails_per_page
+
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+
+    
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+    total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
+    cursor = con.cursor()
+    cursor.execute(total_emails)
+    total_emails = cursor.fetchall()
+    has_next_page = offset + emails_per_page < len(total_emails)
+    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
+
 def get_email_suggestions(prefix):
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     cursor = con.cursor()
     cursor.execute("SELECT email FROM logindetails WHERE email LIKE '{}' LIMIT 5".format(prefix + '%',))
     suggestions = [row[0] for row in cursor.fetchall()]
@@ -332,8 +397,7 @@ def composeMail():
 
 @app.route('/ValidateAdmin', methods=['POST'])
 def ValidateAdmin():
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     query = "select * from admin2"
     image_dir = 'temp_images'
     if not os.path.exists(image_dir):
@@ -584,6 +648,9 @@ def inbox():
     has_next_page = offset + emails_per_page < len(total_emails)
     return render_template('userDash.html', messages=messages, length = len(message), page_number=page_number, has_next_page=has_next_page)
 
+@app.route('/more')
+def more():
+    return render_template('more.html')
 
 @app.route('/SentMailss', methods = ['POST', 'GET'])
 def SentMailss():
@@ -649,8 +716,7 @@ def SentMailss():
 
 @app.route('/ValidateUsers', methods = ['POST', 'GET'])
 def ValidateUsers():
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     query = "select * from logindetails"
     cursor = con.cursor()
     cursor.execute(query)
@@ -719,8 +785,7 @@ def ValidateUsers():
 def ValidateUser():
     name1 = request.form['uname']
     passw = request.form['password']
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     query = "select * from logindetails"
     cursor = con.cursor()
     cursor.execute(query)
@@ -871,8 +936,7 @@ def otp():
     otp = request.form['otp']
     print(otp, g.otp)
     if otp == g.otp:
-        con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+        ''
         cursor = con.cursor()
         registration_sucessful(g.regEmail)
         mySql_insert_query = "INSERT INTO logindetails VALUES ('{}', '{}', '{}', '{}')".format(
@@ -894,8 +958,7 @@ def registerUser():
     g.regEmail = email1 
     g.regPass = passw 
     g.regPhone = phonenum
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     query = "select * from logindetails where uname = '{}' or password = '{}' or email = '{}' or mobilenum = '{}'".format(name1, passw, email1, phonenum)
     cursor = con.cursor()
     cursor.execute(query)
@@ -930,8 +993,7 @@ def email():
     if len(records) == 0:
         return render_template('error_page.html', error_message=  "An error occured" + "Please check the mail id")
     
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     subject = grammarCorrection(subject)
     message = grammarCorrection(message)
     spam = spam_filter(message)
@@ -995,8 +1057,7 @@ def upload_image():
             image_name = image.filename
 
             # Insert image data into the database
-            con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+            ''
             cursor = con.cursor()
             cursor.execute("INSERT INTO images (name, image_data) VALUES (%s, %s)", (image_name, image_data))
             con.commit()
@@ -1069,8 +1130,7 @@ def SendMail():
 
 @app.route('/RecievedMail')
 def RecievedMail():
-    con = c1234.connect(host="localhost", user="root",
-                        passwd="hari@9RUSHI", database="vmail")
+    ''
     query = "select sender, subject, text, kys, receiver, name, image_data from admin2 ORDER BY timestamp_value DESC"
     cursor = con.cursor()
     cursor.execute(query)
