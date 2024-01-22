@@ -8,7 +8,7 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-#from gtts import gTTS
+from gtts import gTTS
 import os
 import spam_model
 
@@ -26,6 +26,7 @@ class Global:
     message = ''
     msgs = ''
     lengths = 0
+    msgId = ''
 
 g = Global()
 con = c1234.connect(host="localhost", user="root",
@@ -372,7 +373,8 @@ def less():
     return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
 
 def get_email_suggestions(prefix):
-    ''
+    con = c1234.connect(host="localhost", user="root",
+                        passwd="hari@9RUSHI", database="vmail")
     cursor = con.cursor()
     cursor.execute("SELECT email FROM logindetails WHERE email LIKE '{}' LIMIT 5".format(prefix + '%',))
     suggestions = [row[0] for row in cursor.fetchall()]
@@ -534,6 +536,110 @@ def ValidateAdmin():
     webbrowser.open(filename)
     return render_template('demo3.html')
 
+@app.route('/Star')
+def Star():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND star = 1 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+   # g.length = len(message)
+
+    return render_template('star.html', messages=messages, length = len(message))
+
+@app.route('/Bin')
+def Bin():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND bin = 1 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+   # g.length = len(message)
+
+    return render_template('bin.html', messages=messages, length = len(message))
+
 @app.route('/Spam')
 def Spam():
     query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND spam = 1 ORDER BY timestamp_value DESC".format(g.c)
@@ -592,7 +698,7 @@ def inbox():
     emails_per_page = 3
     offset = (page_number - 1) * emails_per_page
 
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
     cursor = con.cursor()
     cursor.execute(query)
     message = cursor.fetchall()
@@ -865,6 +971,7 @@ def ValidateUser():
 @app.route('/message/<int:message_id>')
 def message(message_id):
     # Fetch the selected message from the database 
+    g.msgId = message_id
     cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data FROM admin2 WHERE id = %s", (message_id,))
     message = cursor.fetchone()
     print(message)
@@ -909,6 +1016,31 @@ def message(message_id):
     g.message = txt
     g.msgs = message 
     return render_template('message.html', message=message, length = g.length)
+
+@app.route('/moveToBin')
+def moveToBin():
+    cursor = con.cursor()
+    binary = 1
+
+    mySql_insert_query = "update admin2 set bin = 1 where id = '{}'".format(g.msgId)
+    cursor = con.cursor()
+    cursor.execute(mySql_insert_query)
+    con.commit()
+    return message(g.msgId)
+
+@app.route('/moveToStar')
+def moveToStar():
+    print("HI................................................................")
+    cursor = con.cursor()
+    binary = 1
+
+    mySql_insert_query = "update admin2 set star = 1 where id = '{}'".format(g.msgId)
+    cursor = con.cursor()
+    cursor.execute(mySql_insert_query)
+    con.commit()
+    return message(g.msgId)
+
+
 
 def text_to_speech(text, language='en', output_file='static/output.mp3'):
     # Create a gTTS object

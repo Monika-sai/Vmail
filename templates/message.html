@@ -29,6 +29,11 @@
     <link rel="stylesheet" href="media.css" />
     <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
     <script defer src="./script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 
@@ -531,6 +536,14 @@ button.send:hover {
   position: relative;
   display: inline-block;
 }
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
 
 .dropdown-content {
   display: none;
@@ -574,11 +587,10 @@ button.send:hover {
           <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
         </div>
       </header>
-      <nav style="padding-left: 30px;">
+      <nav>
         <div class="nav_container">
           <div class="nav_top">
-            <a href="{{ url_for('composeMail') }}"></a>
-            <span> <ion-icon name="pencil"></ion-icon> Compose</span>
+            <a href="{{ url_for('composeMail') }}"><span> <ion-icon name="pencil"></ion-icon> Compose</span></a>
           </div>
           <div class="nav_middle">
             <ul>
@@ -589,22 +601,29 @@ button.send:hover {
                 </a>
                 <span>{{ length }}</span>
               </li>
+
               <li>
-                <a href="#">
-                  <ion-icon name="star-outline"></ion-icon>
-                  Starred
+                <a href="{{ url_for('Spam') }}">
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                  Spam
                 </a>
               </li>
-              <!-- <li>
-                <a href="#">
-                  <ion-icon name="time-outline"></ion-icon>
-                  Snoozed
-                </a>
-              </li> -->
               <li>
                 <a href="{{ url_for('SendMail') }}">
                   <ion-icon name="send-outline"></ion-icon>
                   Sent
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('Star') }}">
+                  <ion-icon name="star-outline"></ion-icon>
+                  Star
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('Bin') }}">
+                  <ion-icon class="glyphicon glyphicon-trash"></ion-icon>
+                  Bin
                 </a>
               </li>
               <li>
@@ -614,7 +633,7 @@ button.send:hover {
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="{{ url_for('more') }}">
                   <ion-icon name="chevron-down-outline"></ion-icon>
                   More
                 </a>
@@ -659,8 +678,26 @@ button.send:hover {
         <div class="messages_area">
             <section class="home">
                 <div class="text">
-                    <h1>{{ message[0] }}</h1><br><br>
+                  
+                  <br><br>
+                    <h1>{{ message[0] }} 
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp;  &nbsp;  &nbsp;  
+
+                    
+                      <a href="{{ url_for('moveToStar') }}">
+                        Star
+                      </a>
+                        &nbsp;
+                
+
+                      <a href="{{ url_for('moveToBin') }}">
+                       Bin
+                      </a>
+                    </h1>
+                    
+                    <br><br>
                     <p>{{ message[2] }}</p>
+                   
                     <div class="dropdown">
                       <p>to me<span><ion-icon name="caret-down-outline"></ion-icon></span></p>
                       
@@ -674,7 +711,10 @@ button.send:hover {
                       </div>
                     </div>
                     <br><br>
+            
                     <p>{{ message[1] }}</p>
+
+                   
 
                     <br>
                     <form action="{{ url_for('convert') }}" method="post">
