@@ -16,11 +16,6 @@
     <link rel="stylesheet" href="media.css" />
     <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
     <script defer src="./script.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  </head>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 
@@ -529,9 +524,7 @@ button.send:hover {
         <img src="{{url_for('static', filename='googlelogo.png')}}"  alt="logo" style="height:50px;width:80px" />
         <div class="left-area flex">
           <div class="menu hover">
-            <span class="icon"></span>
-            <span class="icon"></span>
-            <span class="icon"></span>
+           
           </div>
           
           <!--<span class="mail-text">Vmail</span>-->
@@ -539,23 +532,19 @@ button.send:hover {
         <div class="middle-area">
           <div class="search">
             <ion-icon name="search-outline" class="hover"></ion-icon>
-            <form action="/search" method="post">
-              <input type="text" name="search" placeholder="Search...">
-              <button type="submit"></button>
-            </form>
+            <input type="search" placeholder="Search mail" />
           </div>
         </div>
         <div class="right-area flex">
-          <ion-icon name="help-circle-outline" class="hover"></ion-icon>
-          <ion-icon name="settings-outline" class="hover"></ion-icon>
-          <ion-icon name="apps" class="hover"></ion-icon>
+          
           <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
         </div>
       </header>
-      <nav>
+      <nav style="padding-left: 30px;">
         <div class="nav_container">
           <div class="nav_top">
-            <a href="{{ url_for('composeMail') }}"><span> <ion-icon name="pencil"></ion-icon> Compose</span></a>
+            <a href="{{ url_for('composeMail') }}"></a>
+            <span> <ion-icon name="pencil"></ion-icon> Compose</span>
           </div>
           <div class="nav_middle">
             <ul>
@@ -564,19 +553,12 @@ button.send:hover {
                   <ion-icon name="image-outline"></ion-icon>
                   Inbox
                 </a>
-                <span>{{ length }}</span>
+                <span>{{ message }}</span>
               </li>
-
               <li>
                 <a href="{{ url_for('Spam') }}">
                   <ion-icon name="alert-circle-outline"></ion-icon>
                   Spam
-                </a>
-              </li>
-              <li>
-                <a href="{{ url_for('SendMail') }}">
-                  <ion-icon name="send-outline"></ion-icon>
-                  Sent
                 </a>
               </li>
               <li>
@@ -587,57 +569,34 @@ button.send:hover {
               </li>
               <li>
                 <a href="{{ url_for('Bin') }}">
-                  <ion-icon class="glyphicon glyphicon-trash"></ion-icon>
+                  <ion-icon name="trash-outline"></ion-icon>
                   Bin
                 </a>
               </li>
               <li>
-                <a href="#">
-                  <ion-icon name="document-outline"></ion-icon>
-                  Draft
+                <a href="{{ url_for('SendMail') }}">
+                  <ion-icon name="send-outline"></ion-icon>
+                  Sent
                 </a>
               </li>
-              <li>
-                <a href="{{ url_for('more') }}">
-                  <ion-icon name="chevron-down-outline"></ion-icon>
-                  More
-                </a>
-              </li>
+             
             </ul>
           </div>
           <div class="nav_bottom">
-            <span>Labels</span>
-            <ion-icon name="add" class="hover"></ion-icon>
-          </div>
+           
         </div>
       </nav>
       <main class="main_content">
         <div class="top">
           <div class="left">
             <div class="check">
-              <img src="./img/checkbox.png" alt="" />
-              <span> <ion-icon name="checkmark"></ion-icon> </span>
-              <ion-icon name="caret-down-outline"></ion-icon>
+             
             </div>
-            <ion-icon
-              name="reload-outline"
-              class="hover content-icon"
-            ></ion-icon>
-            <ion-icon
-              name="ellipsis-vertical"
-              class="hover content-icon"
-            ></ion-icon>
+           
           </div>
           <div class="right">
-            <div class="sort_numbers hover">1-50 of 94</div>
-            <ion-icon
-              name="chevron-back-outline"
-              class="chev content-icon"
-            ></ion-icon>
-            <ion-icon
-              name="chevron-forward-outline"
-              class="hover content-icon"
-            ></ion-icon>
+            <div class="sort_numbers hover"></div>
+           
           </div>
         </div>
         <div class="messages_area">
@@ -766,15 +725,10 @@ button.send:hover {
       </main>
       <aside>
         <div class="aside_icons">
-          <img src="./img/calendar-48.png" alt="" class="hover" />
-          <img src="./img/keep-48.png" alt="" class="hover" />
-          <img src="./img/task-48.png" alt="" class="hover" />
-          <img src="./img/account-48.png" alt="" class="hover" />
-          <span></span>
-          <ion-icon name="add" class="hover"></ion-icon>
+          
 
           <div>
-            <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+           
           </div>
         </div>
       </aside>

@@ -1,46 +1,53 @@
 from flask import Flask, render_template, request, redirect, url_for
-import mysql.connector
+import random
+import time
 
 app = Flask(__name__)
 
-# Replace the following with your MySQL database configuration
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'hari@9RUSHI',
-    'database': 'vmail',
-}
-
-# Establish a connection to MySQL
-conn = mysql.connector.connect(**db_config)
-cursor = conn.cursor()
+# In-memory storage for simplicity. In a production environment, use a database.
+otp_data = {}
 
 @app.route('/')
 def index():
-    # Fetch all emails from the database
-    cursor.execute("SELECT id, sender, subject FROM emails")
-    emails = cursor.fetchall()
-    return render_template('index.html', emails=emails)
+    return render_template('register.html')
 
-@app.route('/search', methods=['POST'])
-def search():
-    # Get the search term from the form
-    search_term = request.form['search']
-    
-    # Search for emails containing the search term in sender, subject, or message
-    cursor.execute("SELECT id, sender, subject FROM emails WHERE sender LIKE %s OR subject LIKE %s OR message LIKE %s",
-                   (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
-    search_results = cursor.fetchall()
-    
-    return render_template('index.html', emails=search_results, search_term=search_term)
+@app.route('/register', methods=['POST'])
+def register():
+    if request.method == 'POST':
+        mobile_number = request.form['mobile_number']
 
-@app.route('/email/<int:email_id>')
-def view_email(email_id):
-    # Fetch the details of the selected email
-    cursor.execute("SELECT * FROM emails WHERE id = %s", (email_id,))
-    email = cursor.fetchone()
-    
-    return render_template('email.html', email=email)
+        # Generate a random 6-digit OTP
+        otp = str(random.randint(100000, 999999))
+
+        # Store OTP along with mobile number and expiry time (5 minutes in this example)
+        otp_data[mobile_number] = {'otp': otp, 'expiry_time': time.time() + 100}
+
+        # Send OTP to the user (use a third-party SMS gateway or service)
+
+        # Redirect to OTP verification page
+        return redirect(url_for('verify_otp', mobile_number=mobile_number))
+
+    return render_template('register.html')
+
+@app.route('/verify_otp', methods=['GET', 'POST'])
+def verify_otp():
+    mobile_number = request.args.get('mobile_number')
+    stored_data = otp_data.get(mobile_number)
+
+    if stored_data:
+        if request.method == 'POST':
+            user_otp = request.form['otp']
+
+            if stored_data['otp'] == user_otp and time.time() < stored_data['expiry_time']:
+                # Valid OTP, proceed with registration
+                del otp_data[mobile_number]  # Remove stored OTP after successful verification
+                return "Registration successful!"
+            else:
+                return "Invalid OTP or OTP expired. Please try again."
+
+        return render_template('verify_otp.html', mobile_number=mobile_number)
+
+    return "Invalid mobile number. Please register again."
 
 if __name__ == '__main__':
     app.run(debug=True)

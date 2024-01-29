@@ -33,6 +33,8 @@ con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
 cursor = con.cursor()
 
+#creating a sample table for search functionality
+
 def create_table():
     # Check if the table already exists and drop it if it does
     cursor.execute("DROP TABLE IF EXISTS emails")
@@ -48,12 +50,13 @@ def create_table():
     """)
     con.commit()
 
+#inserting every record to the table
 def insert_email(id, sender, subject, message):
     # Insert a new email into the 'emails' table
     cursor.execute("INSERT INTO emails (id, sender, subject, message) VALUES (%s, %s, %s, %s)", (id, sender, subject, message))
     con.commit()
 
-
+#sending the matched words to the html page
 @app.route('/SentSearch', methods=['POST'])
 def SentSearch():
     # Get the search term from the form
@@ -117,7 +120,7 @@ def SentSearch():
     
     return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
 
-
+#searching the word
 @app.route('/search', methods=['POST'])
 def search():
     # Get the search term from the form
@@ -181,6 +184,7 @@ def search():
     
     return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
 
+#viewing message based on id
 @app.route('/email/<int:email_id>')
 def view_email(email_id):
     # Fetch the details of the selected email
@@ -189,7 +193,7 @@ def view_email(email_id):
     
     return render_template('email.html', email=email)
 
-
+#spam filteration
 def spam_filter(email):
     # Vectorize the email text
     vectorizer, model = spam_model.load_data()
@@ -203,7 +207,7 @@ def spam_filter(email):
     else:
         return 0
 
-
+#sending mail after registration completed
 def registration_sucessful(reciever):
     sender_email = '20b01a05c6@svecw.edu.in'
     sender_password = 'hari@9RUSHI'  # Your email account password
@@ -226,7 +230,8 @@ def registration_sucessful(reciever):
         print("Email sent successfully!")
     except Exception as e:
         return render_template('error_page.html',  error_message="An error occured" + str(e))
-    
+
+#sending otp to mail while registration
 def sendOtpMail(reciever):
     sender_email = '20b01a05c6@svecw.edu.in'
     sender_password = 'hari@9RUSHI'  # Your email account password
@@ -254,6 +259,7 @@ def sendOtpMail(reciever):
     except Exception as e:
         return render_template('error_page.html',  error_message="An error occured" + str(e))
 
+#sending sent mails to html
 def send_mail(sender, reciever, subject, msg, name):
     sender_email = '20b01a05c6@svecw.edu.in'
     sender_password = 'hari@9RUSHI'  
@@ -278,6 +284,7 @@ def send_mail(sender, reciever, subject, msg, name):
     except Exception as e:
         return render_template('error_page.html', error_message=str(e))
 
+#error and grammar correction
 def grammarCorrection(text):
     my_tool = language_tool_python.LanguageTool('en-US')  
     my_text = text
@@ -372,6 +379,7 @@ def less():
     has_next_page = offset + emails_per_page < len(total_emails)
     return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
 
+#email sugesstions in TO field
 def get_email_suggestions(prefix):
     con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
@@ -536,6 +544,7 @@ def ValidateAdmin():
     webbrowser.open(filename)
     return render_template('demo3.html')
 
+#star messages
 @app.route('/Star')
 def Star():
     query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND star = 1 ORDER BY timestamp_value DESC".format(g.c)
@@ -588,6 +597,7 @@ def Star():
 
     return render_template('star.html', messages=messages, length = len(message))
 
+#messages in bin
 @app.route('/Bin')
 def Bin():
     query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND bin = 1 ORDER BY timestamp_value DESC".format(g.c)
@@ -640,6 +650,7 @@ def Bin():
 
     return render_template('bin.html', messages=messages, length = len(message))
 
+#mssages in spam
 @app.route('/Spam')
 def Spam():
     query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND spam = 1 ORDER BY timestamp_value DESC".format(g.c)
@@ -690,15 +701,16 @@ def Spam():
         messages.append(a)
    # g.length = len(message)
 
-    return render_template('spam.html', messages=messages, length = len(message))
+    return render_template('spam.html', messages=messages, length = g.length)
 
+#messages in inbox
 @app.route('/inbox')
 def inbox():
     page_number = int(request.args.get('page', 1))
     emails_per_page = 3
     offset = (page_number - 1) * emails_per_page
 
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
     cursor = con.cursor()
     cursor.execute(query)
     message = cursor.fetchall()
@@ -745,6 +757,7 @@ def inbox():
         x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
         a.append(x)
         a.append(message[i][5])
+        a.append(message[i][6])
         messages.append(a)
    # g.length = len(message)
     total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
@@ -819,7 +832,7 @@ def SentMailss():
     has_next_page = offset + emails_per_page < len(total_emails)
     return render_template('sentMail.html', messages=messages, length = g.length, length1 = g.lengths, page_number=page_number, has_next_page=has_next_page)
 
-
+#validating user
 @app.route('/ValidateUsers', methods = ['POST', 'GET'])
 def ValidateUsers():
     ''
@@ -832,7 +845,7 @@ def ValidateUsers():
     emails_per_page = 3
     offset = (page_number - 1) * emails_per_page
 
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
     
     cursor.execute(query)
@@ -879,6 +892,7 @@ def ValidateUsers():
         x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
         a.append(x)
         a.append(message[i][5])
+        a.append(message[i][6])
         messages.append(a)
     total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
     cursor = con.cursor()
@@ -905,7 +919,7 @@ def ValidateUser():
             emails_per_page = 3
             offset = (page_number - 1) * emails_per_page
 
-            query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+            query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
             
             cursor.execute(query)
@@ -913,6 +927,7 @@ def ValidateUser():
             subject = []
             text = []
             keys = []
+            star = []
             for i in message:
                 subject.append(i[1])
                 text.append(i[2])
@@ -952,6 +967,7 @@ def ValidateUser():
                 x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
                 a.append(x)
                 a.append(message[i][5])
+                a.append(message[i][6])
                 messages.append(a)
            # g.length = len(message)
             query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC".format(g.c)
@@ -966,13 +982,14 @@ def ValidateUser():
             total_emails = cursor.fetchall()
             has_next_page = offset + emails_per_page < len(total_emails)
             return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
-    
+    return render_template('login.html')
 
+#retrieving full message based on id
 @app.route('/message/<int:message_id>')
 def message(message_id):
     # Fetch the selected message from the database 
     g.msgId = message_id
-    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data FROM admin2 WHERE id = %s", (message_id,))
+    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data, star FROM admin2 WHERE id = %s", (message_id,))
     message = cursor.fetchone()
     print(message)
     message = list(message)
@@ -1017,6 +1034,7 @@ def message(message_id):
     g.msgs = message 
     return render_template('message.html', message=message, length = g.length)
 
+#moving message to bin
 @app.route('/moveToBin')
 def moveToBin():
     cursor = con.cursor()
@@ -1028,20 +1046,22 @@ def moveToBin():
     con.commit()
     return message(g.msgId)
 
+#moving message to star
 @app.route('/moveToStar')
 def moveToStar():
     print("HI................................................................")
     cursor = con.cursor()
     binary = 1
-
-    mySql_insert_query = "update admin2 set star = 1 where id = '{}'".format(g.msgId)
+    cursor.execute("SELECT star FROM admin2 WHERE id = '{}'".format(g.msgId))
+    messag = cursor.fetchone()
+    star = 1 if messag[0] == 0 else 0
+    mySql_insert_query = "update admin2 set star = '{}' where id = '{}'".format(star, g.msgId)
     cursor = con.cursor()
     cursor.execute(mySql_insert_query)
     con.commit()
     return message(g.msgId)
 
-
-
+#converting text to speech
 def text_to_speech(text, language='en', output_file='static/output.mp3'):
     # Create a gTTS object
     tts = gTTS(text=text, lang=language, slow=False)
@@ -1079,7 +1099,7 @@ def otp():
         return render_template('RegistrationSucess.html')
     return render_template('invalidOtp.html')
 
-
+#registering user
 @app.route('/registerUser', methods=['POST'])
 def registerUser():
     name1 = request.form['uname']
@@ -1095,6 +1115,7 @@ def registerUser():
     cursor = con.cursor()
     cursor.execute(query)
     records = cursor.fetchall()
+    print(records)
     if len(records) >= 1:
         return render_template('error_page.html', error_message= "An error occured" + "user name or password exist") 
     sendOtpMail(email1)
@@ -1108,6 +1129,7 @@ def correct_text():
     corrected_text = tool.correct(text)
     return jsonify({'corrected_text': corrected_text})
 
+#composing mail and storing in db
 @app.route('/email', methods=['POST'])
 def email():
     reciever = request.form['reciever']
@@ -1167,9 +1189,10 @@ def email():
         # Read image data
         image_data = image.read()
         image_name = image.filename
-
-    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data, spam) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data, spam)
+    bin = 0
+    star = 0
+    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data, spam, bin, star) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data, spam, bin, star)
 
     cursor = con.cursor()
     cursor.execute(mySql_insert_query, values)

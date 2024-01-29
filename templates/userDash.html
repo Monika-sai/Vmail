@@ -525,7 +525,13 @@ ul li:last-child {
     justify-content: space-between;
     margin-top: 20px;
 }
+.star {
+      color: inherit; /* Set the initial color */
+    }
 
+    .star.yellow {
+      color: rgb(43, 0, 255); /* Set the color for 'star' class with 'yellow' class */
+    }
 
   </style>
   </head>
@@ -534,9 +540,6 @@ ul li:last-child {
       <header class="header">
         <div class="left-area flex">
           <div class="menu hover">
-            <span class="icon"></span>
-            <span class="icon"></span>
-            <span class="icon"></span>
           </div>
           <img src="{{url_for('static', filename='googlelogo.png')}}" alt="logo" style="height:50px;width:80px" />
         </div>
@@ -551,9 +554,10 @@ ul li:last-child {
           </div>
         </div>
         <div class="right-area flex">
-          <ion-icon name="help-circle-outline" class="hover"></ion-icon>
+        <!--  <ion-icon name="help-circle-outline" class="hover"></ion-icon>
           <ion-icon name="settings-outline" class="hover"></ion-icon>
           <ion-icon name="apps" class="hover"></ion-icon>
+          -->
           <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
         </div>
       </header>
@@ -597,41 +601,20 @@ ul li:last-child {
                 </a>
               </li>
               <li>
-                <a href="#">
-                  <ion-icon name="document-outline"></ion-icon>
-                  Draft
-                </a>
+               
               </li>
-              <li>
-                <a href="{{ url_for('more') }}">
-                  <ion-icon name="chevron-down-outline"></ion-icon>
-                  More
-                </a>
-              </li>
+              
             </ul>
           </div>
           <div class="nav_bottom">
-            <span>Labels</span>
-            <ion-icon name="add" class="hover"></ion-icon>
+            
           </div>
         </div>
       </nav>
       <main class="main_content">
         <div class="top">
-          <div class="left">
-            <div class="check">
-              <img src="./img/checkbox.png" alt="" />
-              <span> <ion-icon name="checkmark"></ion-icon> </span>
-              <ion-icon name="caret-down-outline"></ion-icon>
-            </div>
-            <ion-icon
-              name="reload-outline"
-              class="hover content-icon"
-            ></ion-icon>
-            <ion-icon
-              name="ellipsis-vertical"
-              class="hover content-icon"
-            ></ion-icon>
+        <div class="left">
+            
           </div>
           <div class="right">
             <div class="sort_numbers hover"></div>
@@ -685,7 +668,7 @@ ul li:last-child {
                 <img src="./img/checkbox.png" alt="" />
                 <span> <ion-icon name="checkmark"></ion-icon> </span>
               </div>
-              <ion-icon name="star-outline" class="hover star"></ion-icon>
+              <ion-icon name="star-outline" class="hover star{% if messag[-1] == 1 %} yellow{% endif %}"></ion-icon>
               <span>{{ messag[3].split('@')[0]}}</span>
             </div>
             
@@ -712,15 +695,12 @@ ul li:last-child {
       </main>
       <aside>
         <div class="aside_icons">
-          <img src="./img/calendar-48.png" alt="" class="hover" />
-          <img src="./img/keep-48.png" alt="" class="hover" />
-          <img src="./img/task-48.png" alt="" class="hover" />
-          <img src="./img/account-48.png" alt="" class="hover" />
+    
           <span></span>
-          <ion-icon name="add" class="hover"></ion-icon>
+          
 
           <div>
-            <ion-icon name="chevron-forward-outline" class="hover"></ion-icon>
+         
           </div>
         </div>
       </aside>
