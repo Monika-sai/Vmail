@@ -1129,7 +1129,7 @@ def correct_text():
     corrected_text = tool.correct(text)
     return jsonify({'corrected_text': corrected_text})
 
-#composing mail and storing in db
+#composing mail and storing in
 @app.route('/email', methods=['POST'])
 def email():
     reciever = request.form['reciever']
