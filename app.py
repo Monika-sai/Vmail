@@ -595,7 +595,7 @@ def Star():
         messages.append(a)
    # g.length = len(message)
 
-    return render_template('star.html', messages=messages, length = len(message))
+    return render_template('star.html', messages=messages, length = g.length)
 
 #messages in bin
 @app.route('/Bin')
@@ -648,7 +648,7 @@ def Bin():
         messages.append(a)
    # g.length = len(message)
 
-    return render_template('bin.html', messages=messages, length = len(message))
+    return render_template('bin.html', messages=messages, length = g.length)
 
 #mssages in spam
 @app.route('/Spam')
@@ -765,7 +765,7 @@ def inbox():
     cursor.execute(total_emails)
     total_emails = cursor.fetchall()
     has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('userDash.html', messages=messages, length = len(message), page_number=page_number, has_next_page=has_next_page)
+    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
 
 @app.route('/more')
 def more():
@@ -845,7 +845,7 @@ def ValidateUsers():
     emails_per_page = 3
     offset = (page_number - 1) * emails_per_page
 
-    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
     
     cursor.execute(query)
@@ -919,7 +919,7 @@ def ValidateUser():
             emails_per_page = 3
             offset = (page_number - 1) * emails_per_page
 
-            query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+            query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 1 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
             
             cursor.execute(query)
@@ -970,7 +970,7 @@ def ValidateUser():
                 a.append(message[i][6])
                 messages.append(a)
            # g.length = len(message)
-            query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' ORDER BY timestamp_value DESC".format(g.c)
+            query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' and bin = 0 ORDER BY timestamp_value DESC".format(g.c)
 
     
             cursor.execute(query)

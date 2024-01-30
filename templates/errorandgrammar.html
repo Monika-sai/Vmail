@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Correction Demo</title>
+    <style>
+        #editor {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        min-height: 100px;
+    }
+    
+    #suggestions {
+        margin-top: 10px;
+    }
+    
+    .red {
+        color: red;
+        text-decoration: underline red;
+    }
+    
+    .blue {
+        color: blue;
+        text-decoration: underline blue;
+    }
+    
+    .suggestion-click {
+        cursor: pointer;
+        color: green; /* Change color as needed */
+    }
+    
+      </style>
+</head>
+<body>
+    <div id="editor" contenteditable="true" oninput="checkText()" spellcheck="false"></div>
+    <div id="suggestions"></div>
+
+    <script>
+        var lastKnownText = "";
+        var timeout;
+        var cursorPosition = 0;
+
+        // Keep track of suggestions for each highlighted word
+        var wordSuggestions = {};
+
+        function checkText() {
+            var editor = document.getElementById('editor');
+            var text = editor.textContent || editor.innerText;
+
+            if (!text.trim() || text === lastKnownText) {
+                return;
+            }
+
+            // Get cursor position before changes
+            cursorPosition = getCursorPosition();
+
+            // Clear previous highlights and suggestions
+            clearHighlights(editor);
+            document.getElementById('suggestions').innerHTML = "";
+
+            // Wait for a brief pause before applying suggestions
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                fetch('/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text }),
+                })
+                .then(response => response.json())
+                .then(data => displaySuggestions(data, editor));
+            }, 2000);
+
+            lastKnownText = text;
+        }
+
+        function getCursorPosition() {
+            var selection = window.getSelection();
+            return selection.getRangeAt(0).startOffset;
+        }
+
+        function setCursorPosition(node, offset) {
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(node, offset);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
+        function displaySuggestions(data, editor) {
+            for (var i = 0; i < data.length; i++) {
+                var suggestion = data[i];
+                var word = suggestion.word;
+
+                // Highlight the word with red or blue underline
+                var regExp = new RegExp('\\b' + word + '\\b', 'g');
+                editor.innerHTML = editor.innerHTML.replace(regExp, 
+                    '<span class="' + suggestion.type + '" data-word="' + word + '">' + word + '</span>');
+
+                // Store suggestions for each highlighted word
+                if (!wordSuggestions[word]) {
+                    wordSuggestions[word] = [];
+                }
+                wordSuggestions[word].push(suggestion);
+
+                // Show suggestions on word click
+                var highlightedWords = editor.querySelectorAll('.' + suggestion.type);
+                highlightedWords.forEach(function (highlightedWord) {
+                    highlightedWord.onclick = function() {
+                        showWordSuggestions(editor, this);
+                    };
+                });
+            }
+
+            // Restore cursor position after changes
+            setCursorPosition(editor.childNodes[0], cursorPosition);
+        }
+
+        function showWordSuggestions(editor, wordSpan) {
+            var suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = "";
+
+            // Retrieve suggestions for the clicked word
+            var word = wordSpan.dataset.word;
+            var suggestions = wordSuggestions[word] || [];
+
+            // Display suggestions
+            for (var i = 0; i < suggestions.length; i++) {
+                var suggestion = suggestions[i];
+                var suggestionSpan = document.createElement('span');
+                suggestionSpan.classList.add('suggestion-click');
+                suggestionSpan.innerText = suggestion.suggestion;
+                suggestionSpan.onclick = function() {
+                    applySuggestion(editor, wordSpan, this.innerText);
+                };
+                suggestionsDiv.appendChild(suggestionSpan);
+            }
+        }
+
+        function applySuggestion(editor, wordSpan, suggestion) {
+            var word = wordSpan.dataset.word;
+            wordSpan.innerHTML = suggestion;
+            document.getElementById('suggestions').innerHTML = "";
+            clearHighlights(editor);
+        }
+
+        function clearHighlights(editor) {
+            var spans = editor.getElementsByTagName('span');
+            for (var i = 0; i < spans.length; i++) {
+                spans[i].replaceWith(spans[i].innerText);
+            }
+        }
+    </script>
+</body>
+</html>
