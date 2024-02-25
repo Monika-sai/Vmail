@@ -458,7 +458,7 @@ button.send:hover {
   
   .messages_area {
     height: 80vh;
-    overflow: auto;
+    /* overflow: auto; */
   }
   
   .messages {
@@ -579,6 +579,11 @@ button.send:hover {
                   Sent
                 </a>
               </li>
+              <li>
+                <a href = "{{url_for('Blocked')}}">
+                  <ion-icon class = "glyphicon glyphicon-ban-circle"></ion-icon>
+                   Blocked Mails
+              </a>
              
             </ul>
           </div>

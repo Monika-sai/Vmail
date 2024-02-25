@@ -544,6 +544,373 @@ button.send:hover {
 .dropdown:hover .dropdown-content {
   display: block;
 }
+.home {
+position: relative;
+height: 100vh;
+left: 250px;
+width: calc(100% - 250px);
+transition: var(--tran-05);
+}
+
+.home .text {
+font-weight: 500;
+font-size: 30px;
+color: var(--text-color);
+padding: 8px 40px;
+position: absolute;
+}
+
+.button-container {
+margin-top:100px;
+display: flex;
+justify-content: space-between;
+width: 27rem;
+box-shadow: 0 0 13px #0000003d;
+border-radius: 5px;
+margin: 0 auto; /* Center the container horizontally */
+padding: 1rem; /* Add some padding to create space between buttons and the container */
+}
+
+/* Styles for the buttons */
+.button-container button {
+padding: 0.75rem;
+border: none;
+background-color: #695cfe; 
+color: #fff; 
+border-radius: 5px;
+cursor: pointer;
+}
+
+.button-container button:hover {
+background-color: #958bff;
+}
+.modal-container { 
+position: relative;
+top: 20px;
+
+bottom: 10px;
+width: 225%;
+height: 100%;
+justify-content: center;
+align-items: center;
+z-index: 0;
+}
+
+.modal-content {
+background: #fff;
+border-radius: 5px;
+padding: 20px;
+width: 45%;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Style labels to be on top of inputs */
+.formLabel {
+font-weight: bold;
+color: #333;
+font-size: 24px;
+}
+
+/* Style text inputs */
+.form-style {
+width: 100%;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 5px;
+margin-bottom: 5px;
+}
+/* Style the button */
+button.send {
+background-color: #695cfe;
+color: #fff;
+padding: 10px 20px;
+text-align: center;
+border: none;
+margin-left: 40%;
+border-radius: 5px;
+cursor: pointer;
+height: 40px;
+width:100px;
+}
+
+/* Hover effect for the button */
+button.send:hover {
+background-color: #958bff;
+}
+@media only screen and (max-width: 600px) {
+  section {
+    display: none;
+  }
+
+  body::after {
+    content: "WE ARE MAKING RESPONSIVE STAY TUNE 😉";
+    background-color: blueviolet;
+    color: orange;
+    height: 100vh;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 16px;
+  }
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --light-gray: #f8f9fa;
+  --middle-gray: #e9ecef;
+  --dark-gray: #495057;
+  --light-blue: #d0ebff;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f6f8fc;
+  overflow: hidden;
+}
+
+section {
+  height: 100vh;
+  display: grid;
+  grid-template-areas: "header header header" "nav main-content sidebar" "nav main-content sidebar";
+  grid-template-columns: 265px 4fr 60px;
+  grid-template-rows: 70px 1fr;
+}
+
+header,
+aside,
+footer,
+nav {
+  padding: 20px;
+}
+
+header {
+  grid-area: header;
+}
+nav {
+  grid-area: nav;
+}
+main {
+  grid-area: main-content;
+}
+aside {
+  grid-area: sidebar;
+}
+
+footer {
+  grid-area: footer;
+}
+
+.flex {
+  display: flex;
+  justify-content: Normal;
+  align-items: center;
+  gap: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--dark-gray);
+}
+
+ion-icon {
+  cursor: pointer;
+}
+
+.hover:hover {
+  transition: all 0.3s;
+  background-color: #d8dbdd;
+  cursor: pointer;
+}
+
+.header {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-area img:hover {
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.menu .icon {
+  height: 2px;
+  width: 20px;
+  background-color: #464f58;
+  margin: 2px 0;
+}
+
+.mail-text {
+  font-size: 20px;
+  letter-spacing: 0.7px;
+  color: var(--dark-gray);
+}
+
+.mail-text:hover {
+  cursor: pointer;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px;
+  border-radius: 10px;
+  background-color: var(--middle-gray);
+}
+
+.search ion-icon {
+  height: 24px;
+  width: 24px;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.search input {
+  border: none;
+  outline: none;
+  background-color: var(--middle-gray);
+  padding: 2px;
+  font-size: 18px;
+}
+
+.left-area {
+  flex: 1;
+}
+
+.middle-area {
+  flex: 3;
+}
+
+.right-area {
+  flex: 1;
+  padding: 10px;
+  gap: 10px;
+}
+
+.right-area ion-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.right-area img {
+  border-radius: 50%;
+  height: 36px;
+  object-fit: contain;
+}
+
+.right-area img:hover {
+  cursor: pointer;
+}
+
+.nav_container {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  margin-left: -20px;
+  padding: 12px;
+  gap: 40px;
+}
+
+.nav_top span {
+  width: 75%;
+  background-color: var(--light-blue);
+  padding: 20px 32px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav_top span ion-icon {
+  font-size: 24px;
+}
+
+.nav_middle ul li {
+  font-size: 14px;
+  list-style: none;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  padding: 8px;
+}
+
+.nav_middle ul li a {
+  display: flex;
+  gap: 12px;
+  letter-spacing: 1px;
+}
+
+.nav_middle ul li a ion-icon,
+.nav_bottom ion-icon {
+  width: 18px;
+  height: 18px;
+}
+
+ul li:last-child {
+  margin-bottom: 0;
+}
+
+.nav_middle ul li:first-child {
+  display: flex;
+  justify-content: space-between;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #e7f5ff;
+}
+
+.nav_middle ul li:first-child span {
+  margin-right: 8px;
+}
+
+.nav_middle ul li:first-child a,
+.nav_middle ul li:first-child span {
+  font-weight: 600;
+  color: #000;
+}
+
+.nav_middle ul li:hover {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: #e7f5ff;
+}
+
+.nav_bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav_bottom ion-icon {
+  transition: all 0.3s;
+  width: 20px;
+  height: 20px;
+  color: var(--dark-gray);
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.main_content {
+  margin-top: 5px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  background-color: var(--middle-gray);
+  overflow: hidden;
+}
 
 .content-icon,
 .star {
@@ -610,7 +977,7 @@ button.send:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
 
 .messages_area {
@@ -619,7 +986,7 @@ button.send:hover {
 }
 
 .messages {
-  font-size: 1px;
+  font-size: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -805,6 +1172,46 @@ button.send:hover {
         .eyes:not(.open) .slash {
             display: block;
         }
+
+        .email {
+            border-bottom: 1px solid #ddd;
+            font-size: 20px;
+            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            width:1000px;
+            height:50px;
+            padding-top:0px;
+            padding-bottom:0px
+        }
+        .email .sender {
+            flex: 1;
+            font-weight: bold;
+        }
+        .email .subject {
+            flex: 3;
+        }
+        .email .date {
+            flex: 1;
+            text-align: right;
+            color: #666;
+            padding-right: 50px;
+        }
+        .buttons button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .buttons .unblock {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .buttons .cancel {
+            background-color: #f44336;
+            color: white;
+        }
   </style>
   </head>
   <body>
@@ -876,20 +1283,18 @@ button.send:hover {
                   Star
                 </a>
               </li>
-              
-             
               <li>
                 <a href="{{ url_for('Bin') }}">
                   <ion-icon class="glyphicon glyphicon-trash"></ion-icon>
                   Bin
                 </a>
               </li>
-              <li>
-                <a href = "{{url_for('Blocked')}}">
-                  <ion-icon class = "glyphicon glyphicon-ban-circle"></ion-icon>
-                   Blocked Mails
-              </a>
-              
+             <li> 
+              <a href = "{{url_for('Blocked')}}">
+                <ion-icon class = "glyphicon glyphicon-ban-circle"></ion-icon>
+                 Blocked Mails
+            </a>
+              </li>
             </ul>
           </div>
           <div class="nav_bottom">
@@ -911,12 +1316,27 @@ button.send:hover {
           </div>
         </div>
         <div class="messages_area">
-            <section class="home">
+            <div class="home" style = "left: 30px;">
                 <div class="text">
-                  
+                    {% for messag in message %}
+                    <div class="email">
+                        <div class="sender">{{ messag[0] }}</div>
+                        <div class="buttons">
+                            <a href = "{{ url_for('UnBlock', id=messag[1]) }}" >
+                            <button class="unblock">Unblock</button>
+                        </a>
+                            <button class="cancel">Cancel</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                    </div>
+                    
+                  <!--
                   <br><br>
                     <h1>{{ message[0] }} 
-                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; 
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; 
+                     
 
                       <a href="{{ url_for('moveToStar') }}">
                         <ion-icon name="star-outline" class="hover star{% if star == 1 %} yellow{% endif %}" width="20" height="20"></ion-icon>
@@ -927,13 +1347,12 @@ button.send:hover {
                       <a href="{{ url_for('moveToBin') }}">
                         <ion-icon name="trash-outline" size="26"></ion-icon>
                       </a>
-                      &nbsp;
-                      <a href="{{ url_for('blockedUsers') }}">
-                        <ion-icon name="ban-outline" size="26"></ion-icon>
-
+                     
                       </a>
-                      
                         &nbsp;
+            
+
+          
                 </h1>
                     
                     <br><br>
@@ -976,129 +1395,15 @@ button.send:hover {
                   </audio>
               {% endif %}
 
-
+-->
  
 
 
-               <!-- <div style = "top:40px;left:67px" class="text">
-                    <h5>Compose Mail</h5>
-                </div>-->
-                <!-- <div class="text">
-                    <div class="button-container">
-                        <button onclick="runSpeechRecog('reciever')">Speech for To</button>
-                        <button onclick="runSpeechRecog('subject')">Speech for Subject</button>
-                        <button onclick="runSpeechRecog('message')">Speech for Message</button>
-                    </div>
-                    <div class="modal-container">
-                        <div class="modal-content">
-                            <form name="emailForm" action="{{ url_for('email') }}" method="post" enctype="multipart/form-data">
-                                <div class="form-item">
-                                    <label class="formLabel" for="reciever"><h6>To</h6></label>
-                                    <input type="text" name="reciever" id="reciever" class="form-style" required oninput="getSuggestions(this.value)" />
-                                  <br> <h6 style="font-size: 15px;" id="suggestions-container"></h6>
-                                </div>
-                                <div class="form-item">
-                                    <label class="formLabel" for="subject"><h6>Subject</h6></label>
-                                    <input type="text" name="subject" id="subject" class="form-style" required />
-                                </div>
-                                <div class="form-item">
-                                    <label class="formLabel" for="message"><h6>Message:</h6></label>
-                                    <textarea  name="message" id="message" rows= "4" class="form-style" required ></textarea>
-                                </div>
-                                <div class="form-item">
-                                    <label class="formLabel" for="image"><h6>Upload Image:</h6></label>
-                                    <input type="file" name="image" id="image" class="form-style" accept="image/*" />
-                                </div>
-                                <div class="form-item">
-                                    <button type="submit" class="send">Send</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <h3 id="output" class="hide"></h3>
-                    </div>
-                </div> -->
-            </section>
-  
-            <!-- <script>
-            var currentSubject = "";
-            var currentMessage = "";
-            var currentReciever = "";
-  
-            // Function to get autocomplete suggestions
-            function getSuggestions(prefix) {
-                fetch('/autocomplete?prefix=' + prefix)
-                    .then(response => response.json())
-                    .then(data => {
-                        var suggestionsContainer = document.getElementById('suggestions-container');
-                        suggestionsContainer.innerHTML = ''; // Clear previous suggestions
-  
-                        // Display suggestions
-                        data.suggestions.forEach(suggestion => {
-                            var suggestionElement = document.createElement('div');
-                            suggestionElement.textContent = suggestion;
-                            suggestionElement.onclick = function() {
-                                document.getElementById('reciever').value = suggestion;
-                                suggestionsContainer.innerHTML = ''; // Clear suggestions after selection
-                            };
-                            suggestionsContainer.appendChild(suggestionElement);
-                        });
-                    });
-            }
-  
-            runSpeechRecog = (field) => {
-                document.getElementById("output").innerHTML = "Listening...";
-                var output = document.getElementById('output');
-                var textInput = document.getElementById(field);
-                let recognition = new webkitSpeechRecognition();
-                recognition.onstart = () => {
-                    output.innerHTML = "Listening...";
-                }
-                recognition.onresult = (e) => {
-                    var transcript = e.results[0][0].transcript;
-                    output.innerHTML = transcript;
-  
-                    // Replace specific phrases with symbols
-                    transcript = transcript.replace(/at the rate/g, '@');
-                    transcript = transcript.replace(/question mark/g, '?');
-                    transcript = transcript.replace(/dot/g, '.');
-                    transcript = transcript.replace(/new line/g, '\n');
-  
-                    if (field === 'subject') {
-                        currentSubject = transcript;
-                        textInput.value = currentSubject;
-                    } else if (field === 'message') {
-                        currentMessage = transcript;
-                        textInput.value = currentMessage;
-                    }
-                    else if (field === 'reciever') {
-                        currentReciever = transcript;
-                        textInput.value = currentReciever;
-                    }
-                }
-                recognition.start();
-            }
-            </scrip> -->
+               
   
             <!-- Script -->
             <script src="{{ url_for('static', filename='userdash-script.js') }}"></script>  
-          <!-- <div class="messages">
-            <div class="messages_left">
-              <div class="check check_2">
-                <img src="./img/checkbox.png" alt="" />
-                <span> <ion-icon name="checkmark"></ion-icon> </span>
-              </div>
-              <ion-icon name="star-outline" class="hover star"></ion-icon>
-              <span>Twitter</span>
-            </div>
-            <div class="messages_content">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatum deleniti, eligendi vitae explicabo accusamus,
-              distinctio molestias a nisi tempore modi dolores debitis
-              laboriosam? Delectus laudantium, in minima sed eum consectetur!
-            </div>
-            <div class="messages_date">Dec,28</div>
-          </div> -->
+          
 
         </div>
       </main>

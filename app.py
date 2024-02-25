@@ -11,6 +11,8 @@ from email.mime.text import MIMEText
 from gtts import gTTS
 import os
 import spam_model
+from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -27,13 +29,19 @@ class Global:
     msgs = ''
     lengths = 0
     msgId = ''
+    msg = ''
+    timestamp = ''
+    kys = ''
+    sub = ''
+    forgotMail = ''
+    letter = ''
+    email = ''
+    mail = ''
 
 g = Global()
 con = c1234.connect(host="localhost", user="root",
                         passwd="hari@9RUSHI", database="vmail")
 cursor = con.cursor()
-
-#creating a sample table for search functionality
 
 def create_table():
     # Check if the table already exists and drop it if it does
@@ -118,7 +126,7 @@ def SentSearch():
                    (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
     search_results = cursor.fetchall()
     
-    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
+    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1, letter = g.letter, email = g.c)
 
 #searching the word
 @app.route('/search', methods=['POST'])
@@ -182,7 +190,7 @@ def search():
                    (f"%{search_term}%", f"%{search_term}%", f"%{search_term}%"))
     search_results = cursor.fetchall()
     
-    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1)
+    return render_template('search.html', emails=search_results, search_term=search_term, messages = [], page_number = 1, letter = g.letter, email = g.c)
 
 #viewing message based on id
 @app.route('/email/<int:email_id>')
@@ -191,7 +199,7 @@ def view_email(email_id):
     cursor.execute("SELECT * FROM emails WHERE id = %s", (email_id,))
     email = cursor.fetchone()
     
-    return render_template('email.html', email=email)
+    return render_template('email.html', email=email, letter = g.letter, email1 = g.c)
 
 #spam filteration
 def spam_filter(email):
@@ -258,6 +266,7 @@ def sendOtpMail(reciever):
         print("Email sent successfully!")
     except Exception as e:
         return render_template('error_page.html',  error_message="An error occured" + str(e))
+    
 
 #sending sent mails to html
 def send_mail(sender, reciever, subject, msg, name):
@@ -283,6 +292,310 @@ def send_mail(sender, reciever, subject, msg, name):
         print("Email sent successfully!")
     except Exception as e:
         return render_template('error_page.html', error_message=str(e))
+#star messages
+@app.route('/Star')
+def Star():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND star = 1 and bin = 0 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+   # g.length = len(message)
+
+    return render_template('star.html', messages=messages, length = g.length, letter = g.letter, email = g.c)
+
+#messages in bin
+@app.route('/Bin')
+def Bin():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND bin = 1 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+   # g.length = len(message)
+
+    return render_template('bin.html', messages=messages, length = g.length, letter = g.letter, email = g.c)
+
+#mssages in spam
+@app.route('/Spam')
+def Spam():
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND spam = 1 ORDER BY timestamp_value DESC".format(g.c)
+    cursor.execute(query)
+    message = cursor.fetchall()
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+   # g.length = len(message)
+
+    return render_template('spam.html', messages=messages, length = g.length, letter = g.letter, email = g.c)
+
+#messages in inbox
+@app.route('/inbox')
+def inbox():
+    page_number = int(request.args.get('page', 1))
+    emails_per_page = 3
+    offset = (page_number - 1) * emails_per_page
+
+    query = "SELECT id, subject, text, sender, kys, timestamp_value, star, viewed FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    cursor = con.cursor()
+    cursor.execute(query)
+    message = cursor.fetchall()
+    print(message)
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        a.append(message[i][6])
+        a.append(message[i][7])
+        messages.append(a)
+   # g.length = len(message)
+    total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
+    cursor = con.cursor()
+    cursor.execute(total_emails)
+    total_emails = cursor.fetchall()
+    has_next_page = offset + emails_per_page < len(total_emails)
+    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
+
+@app.route('/blockedUsers')
+def blockedUsers():
+    query = "SELECT receiver, sender FROM admin2 WHERE id = '{}'".format(g.msgId)
+    cursor = con.cursor()
+    cursor.execute(query)
+    message = cursor.fetchall()
+    print(message)
+    query = "ALTER TABLE `vmail`.`blockedusers` CHANGE COLUMN `receiver` `receiver` VARCHAR(100) NOT NULL , CHANGE COLUMN `sender` `sender` VARCHAR(100) NOT NULL;"
+    cursor = con.cursor()
+    cursor.execute(query)
+    receiver, sender = message[0][0], message[0][1]
+    block = 1
+    cursor.execute("INSERT INTO blockedusers (receiver, sender, block) VALUES (%s, %s, %s)", (receiver, sender, block))
+    con.commit()
+    return inbox()
+
+@app.route('/more')
+def more():
+    return render_template('more.html')
+
+@app.route('/SentMailss', methods = ['POST', 'GET'])
+def SentMailss():
+    page_number = int(request.args.get('page', 2))
+    emails_per_page = 2
+    offset = (page_number - 1) * emails_per_page
+
+    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE sender = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    cursor = con.cursor()
+    cursor.execute(query)
+    message = cursor.fetchall()
+    print(message)
+    subject = []
+    text = []
+    keys = []
+    for i in message:
+        subject.append(i[1])
+        text.append(i[2])
+        keys.append(i[4])
+    actualText = []
+    actualSub = []
+    
+    for i in range(len(subject)):
+        sub = ''
+        txt = ''
+        subjectDecrypt = subject[i].split()
+        textDecrypt = text[i].split()
+        k = keys[i]
+        for i in subjectDecrypt:
+            for j in i:
+                try:
+                    sub += chr((k.index(j) + 65))
+                except:
+                    sub += j
+            sub += ' '
+        for i in textDecrypt:
+            for j in i:
+                try:
+                    txt += chr((k.index(j) + 65))
+                except:
+                    txt += j
+            txt += ' '
+        actualSub.append(sub)
+        actualText.append(txt)
+    messages = []
+    for i in range(len(message)):
+        a = []
+        a.append(message[i][0])
+        a.append(actualSub[i])
+        a.append(actualText[i][:5])
+        x = message[i][3].split('@')[0]
+        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
+        a.append(x)
+        a.append(message[i][5])
+        messages.append(a)
+    total_emails = "SELECT * FROM admin2 WHERE sender = '{}'".format(g.c)
+    cursor = con.cursor()
+    cursor.execute(total_emails)
+    total_emails = cursor.fetchall()
+    has_next_page = offset + emails_per_page < len(total_emails)
+    return render_template('sentMail.html', messages=messages, length = g.length, length1 = g.lengths, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
 
 #error and grammar correction
 def grammarCorrection(text):
@@ -308,6 +621,21 @@ def grammarCorrection(text):
     
     my_NewText = "".join(my_NewText)  
     return my_NewText
+
+@app.route('/editMail/<int:msgid>', methods=['GET', 'POST'])
+def editMail(msgid):
+    # Check if the current user is allowed to edit the mail
+    # You can use your authentication logic here
+
+    # Get the original mail content
+    original_mail = g.message
+
+    if request.method == 'POST':
+        # Update the mail content in the database
+        edited_message = request.form['editedMessage']
+        return redirect(url_for('login'))
+
+    return render_template('edit_mail.html', original_mail=original_mail, letter = g.letter, email = g.c)
 
 @app.route('/')
 def index():
@@ -377,7 +705,7 @@ def less():
     cursor.execute(total_emails)
     total_emails = cursor.fetchall()
     has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
+    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
 
 #email sugesstions in TO field
 def get_email_suggestions(prefix):
@@ -398,16 +726,47 @@ def autocomplete():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    return render_template('login.html', letter = g.letter)
+
+
+@app.route('/UnBlock/<int:id>')
+def UnBlock(id):
+    mySql_insert_query = "update blockedusers set block = 0 where id = '{}'".format(id)
+    cursor = con.cursor()
+    cursor.execute(mySql_insert_query)
+    con.commit()
+    query = "select sender, id from blockedusers where receiver = '{}' and block = 1".format(g.mail)
+    cursor = con.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    message = []
+    for i in records:
+        i = list(i)
+        message.append(i)
+    print(message)
+    return render_template('blockusers.html', message = message, length = g.length, letter = g.letter, email = g.c)
+
+@app.route('/Blocked')
+def Blocked():
+    print(g.mail)
+    query = "select sender, id from blockedusers where receiver = '{}' and block = 1".format(g.mail)
+    cursor = con.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    message = []
+    for i in records:
+        i = list(i)
+        message.append(i)
+    print(message)
+    return render_template('blockusers.html', message = message, length = g.length, letter = g.letter, email = g.c)
 
 @app.route('/composeMail')
 def composeMail():
-    return render_template('compose.html', message = g.length)
+    return render_template('compose.html', message = g.length, letter = g.letter, email = g.c)
 
 
 @app.route('/ValidateAdmin', methods=['POST'])
 def ValidateAdmin():
-    ''
     query = "select * from admin2"
     image_dir = 'temp_images'
     if not os.path.exists(image_dir):
@@ -544,294 +903,6 @@ def ValidateAdmin():
     webbrowser.open(filename)
     return render_template('demo3.html')
 
-#star messages
-@app.route('/Star')
-def Star():
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND star = 1 ORDER BY timestamp_value DESC".format(g.c)
-    cursor.execute(query)
-    message = cursor.fetchall()
-    subject = []
-    text = []
-    keys = []
-    for i in message:
-        subject.append(i[1])
-        text.append(i[2])
-        keys.append(i[4])
-    actualText = []
-    actualSub = []
-    
-    for i in range(len(subject)):
-        sub = ''
-        txt = ''
-        subjectDecrypt = subject[i].split()
-        textDecrypt = text[i].split()
-        k = keys[i]
-        for i in subjectDecrypt:
-            for j in i:
-                try:
-                    sub += chr((k.index(j) + 65))
-                except:
-                    sub += j
-            sub += ' '
-        for i in textDecrypt:
-            for j in i:
-                try:
-                    txt += chr((k.index(j) + 65))
-                except:
-                    txt += j
-            txt += ' '
-        actualSub.append(sub)
-        actualText.append(txt)
-    messages = []
-    for i in range(len(message)):
-        a = []
-        a.append(message[i][0])
-        a.append(actualSub[i])
-        a.append(actualText[i][:5])
-        x = message[i][3].split('@')[0]
-        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
-        a.append(x)
-        a.append(message[i][5])
-        messages.append(a)
-   # g.length = len(message)
-
-    return render_template('star.html', messages=messages, length = g.length)
-
-#messages in bin
-@app.route('/Bin')
-def Bin():
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND bin = 1 ORDER BY timestamp_value DESC".format(g.c)
-    cursor.execute(query)
-    message = cursor.fetchall()
-    subject = []
-    text = []
-    keys = []
-    for i in message:
-        subject.append(i[1])
-        text.append(i[2])
-        keys.append(i[4])
-    actualText = []
-    actualSub = []
-    
-    for i in range(len(subject)):
-        sub = ''
-        txt = ''
-        subjectDecrypt = subject[i].split()
-        textDecrypt = text[i].split()
-        k = keys[i]
-        for i in subjectDecrypt:
-            for j in i:
-                try:
-                    sub += chr((k.index(j) + 65))
-                except:
-                    sub += j
-            sub += ' '
-        for i in textDecrypt:
-            for j in i:
-                try:
-                    txt += chr((k.index(j) + 65))
-                except:
-                    txt += j
-            txt += ' '
-        actualSub.append(sub)
-        actualText.append(txt)
-    messages = []
-    for i in range(len(message)):
-        a = []
-        a.append(message[i][0])
-        a.append(actualSub[i])
-        a.append(actualText[i][:5])
-        x = message[i][3].split('@')[0]
-        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
-        a.append(x)
-        a.append(message[i][5])
-        messages.append(a)
-   # g.length = len(message)
-
-    return render_template('bin.html', messages=messages, length = g.length)
-
-#mssages in spam
-@app.route('/Spam')
-def Spam():
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' AND spam = 1 ORDER BY timestamp_value DESC".format(g.c)
-    cursor.execute(query)
-    message = cursor.fetchall()
-    subject = []
-    text = []
-    keys = []
-    for i in message:
-        subject.append(i[1])
-        text.append(i[2])
-        keys.append(i[4])
-    actualText = []
-    actualSub = []
-    
-    for i in range(len(subject)):
-        sub = ''
-        txt = ''
-        subjectDecrypt = subject[i].split()
-        textDecrypt = text[i].split()
-        k = keys[i]
-        for i in subjectDecrypt:
-            for j in i:
-                try:
-                    sub += chr((k.index(j) + 65))
-                except:
-                    sub += j
-            sub += ' '
-        for i in textDecrypt:
-            for j in i:
-                try:
-                    txt += chr((k.index(j) + 65))
-                except:
-                    txt += j
-            txt += ' '
-        actualSub.append(sub)
-        actualText.append(txt)
-    messages = []
-    for i in range(len(message)):
-        a = []
-        a.append(message[i][0])
-        a.append(actualSub[i])
-        a.append(actualText[i][:5])
-        x = message[i][3].split('@')[0]
-        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
-        a.append(x)
-        a.append(message[i][5])
-        messages.append(a)
-   # g.length = len(message)
-
-    return render_template('spam.html', messages=messages, length = g.length)
-
-#messages in inbox
-@app.route('/inbox')
-def inbox():
-    page_number = int(request.args.get('page', 1))
-    emails_per_page = 3
-    offset = (page_number - 1) * emails_per_page
-
-    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
-    cursor = con.cursor()
-    cursor.execute(query)
-    message = cursor.fetchall()
-    print(message)
-    subject = []
-    text = []
-    keys = []
-    for i in message:
-        subject.append(i[1])
-        text.append(i[2])
-        keys.append(i[4])
-    actualText = []
-    actualSub = []
-    
-    for i in range(len(subject)):
-        sub = ''
-        txt = ''
-        subjectDecrypt = subject[i].split()
-        textDecrypt = text[i].split()
-        k = keys[i]
-        for i in subjectDecrypt:
-            for j in i:
-                try:
-                    sub += chr((k.index(j) + 65))
-                except:
-                    sub += j
-            sub += ' '
-        for i in textDecrypt:
-            for j in i:
-                try:
-                    txt += chr((k.index(j) + 65))
-                except:
-                    txt += j
-            txt += ' '
-        actualSub.append(sub)
-        actualText.append(txt)
-    messages = []
-    for i in range(len(message)):
-        a = []
-        a.append(message[i][0])
-        a.append(actualSub[i])
-        a.append(actualText[i][:5])
-        x = message[i][3].split('@')[0]
-        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
-        a.append(x)
-        a.append(message[i][5])
-        a.append(message[i][6])
-        messages.append(a)
-   # g.length = len(message)
-    total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
-    cursor = con.cursor()
-    cursor.execute(total_emails)
-    total_emails = cursor.fetchall()
-    has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
-
-@app.route('/more')
-def more():
-    return render_template('more.html')
-
-@app.route('/SentMailss', methods = ['POST', 'GET'])
-def SentMailss():
-    page_number = int(request.args.get('page', 2))
-    emails_per_page = 2
-    offset = (page_number - 1) * emails_per_page
-
-    query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE sender = '{}' ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
-    cursor = con.cursor()
-    cursor.execute(query)
-    message = cursor.fetchall()
-    print(message)
-    subject = []
-    text = []
-    keys = []
-    for i in message:
-        subject.append(i[1])
-        text.append(i[2])
-        keys.append(i[4])
-    actualText = []
-    actualSub = []
-    
-    for i in range(len(subject)):
-        sub = ''
-        txt = ''
-        subjectDecrypt = subject[i].split()
-        textDecrypt = text[i].split()
-        k = keys[i]
-        for i in subjectDecrypt:
-            for j in i:
-                try:
-                    sub += chr((k.index(j) + 65))
-                except:
-                    sub += j
-            sub += ' '
-        for i in textDecrypt:
-            for j in i:
-                try:
-                    txt += chr((k.index(j) + 65))
-                except:
-                    txt += j
-            txt += ' '
-        actualSub.append(sub)
-        actualText.append(txt)
-    messages = []
-    for i in range(len(message)):
-        a = []
-        a.append(message[i][0])
-        a.append(actualSub[i])
-        a.append(actualText[i][:5])
-        x = message[i][3].split('@')[0]
-        x = x + (' ' * (100 - len(x) if len(x) < 100 else 0))
-        a.append(x)
-        a.append(message[i][5])
-        messages.append(a)
-    total_emails = "SELECT * FROM admin2 WHERE sender = '{}'".format(g.c)
-    cursor = con.cursor()
-    cursor.execute(total_emails)
-    total_emails = cursor.fetchall()
-    has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('sentMail.html', messages=messages, length = g.length, length1 = g.lengths, page_number=page_number, has_next_page=has_next_page)
-
 #validating user
 @app.route('/ValidateUsers', methods = ['POST', 'GET'])
 def ValidateUsers():
@@ -845,7 +916,7 @@ def ValidateUsers():
     emails_per_page = 3
     offset = (page_number - 1) * emails_per_page
 
-    query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+    query = "SELECT id, subject, text, sender, kys, timestamp_value, star, viewed FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
     
     cursor.execute(query)
@@ -893,13 +964,14 @@ def ValidateUsers():
         a.append(x)
         a.append(message[i][5])
         a.append(message[i][6])
+        a.append(message[i][7])
         messages.append(a)
     total_emails = "SELECT * FROM admin2 WHERE receiver = '{}'".format(g.c)
     cursor = con.cursor()
     cursor.execute(total_emails)
     total_emails = cursor.fetchall()
     has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
+    return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
 
 @app.route('/ValidateUser', methods = ['POST', 'GET'])
 def ValidateUser():
@@ -915,11 +987,13 @@ def ValidateUser():
         if i[0] == name1 and i[1] == passw:
             g.c = i[2]
             g.name = i[0]
+            g.letter = g.c[0]
+            g.mail = i[2]
             page_number = int(request.args.get('page', 1))
             emails_per_page = 3
             offset = (page_number - 1) * emails_per_page
 
-            query = "SELECT id, subject, text, sender, kys, timestamp_value, star FROM admin2 WHERE receiver = '{}' and bin = 1 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
+            query = "SELECT id, subject, text, sender, kys, timestamp_value, star, viewed FROM admin2 WHERE receiver = '{}' and bin = 0 and spam = 0 ORDER BY timestamp_value DESC LIMIT {} OFFSET {}".format(g.c, emails_per_page, offset)
 
             
             cursor.execute(query)
@@ -968,11 +1042,10 @@ def ValidateUser():
                 a.append(x)
                 a.append(message[i][5])
                 a.append(message[i][6])
+                a.append(message[i][7])
                 messages.append(a)
            # g.length = len(message)
             query = "SELECT id, subject, text, sender, kys, timestamp_value FROM admin2 WHERE receiver = '{}' and bin = 0 ORDER BY timestamp_value DESC".format(g.c)
-
-    
             cursor.execute(query)
             mess = cursor.fetchall()
             g.length = len(mess)
@@ -981,24 +1054,46 @@ def ValidateUser():
             cursor.execute(total_emails)
             total_emails = cursor.fetchall()
             has_next_page = offset + emails_per_page < len(total_emails)
-            return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page)
+            return render_template('userDash.html', messages=messages, length = g.length, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
     return render_template('login.html')
 
+
+def check_edit_permission(sent_time):
+    # Convert the sent timestamp to a datetime object
+    time_difference = datetime.now() - sent_time
+
+    # Check if the time difference is less than 15 minutes
+    return time_difference.total_seconds() < 900 
+
+
 #retrieving full message based on id
-@app.route('/message/<int:message_id>')
-def message(message_id):
+@app.route('/SentMessage/<int:message_id>')
+def SentMessage(message_id):
     # Fetch the selected message from the database 
     g.msgId = message_id
-    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data, star FROM admin2 WHERE id = %s", (message_id,))
+    cursor = con.cursor()
+    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data, star, edit, viewed FROM admin2 WHERE id = %s", (message_id,))
     message = cursor.fetchone()
-    print(message)
     message = list(message)
+    print(message)
+    g.timestamp = message[4]
     name = message[6]
     image_data = message[7]
+    edit = message[9]
+    star = message[8]
+    viewed = message[10]
+    print(g.mail)
+    if message[3] == g.mail:
+        viewed = 1
+        mySql_insert_query = "update admin2 set viewed = 1 where id = '{}'".format(g.msgId)
+        cursor = con.cursor()
+        cursor.execute(mySql_insert_query)
+        con.commit()
     image_dir = 'static'
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
     key = message[5]
+    g.kys = key
     sub = ''
     txt = ''
     subjectDecrypt = message[0].split()
@@ -1030,9 +1125,141 @@ def message(message_id):
     message[1] = txt
     message[6] = a4
     print(message[:len(message) - 1])
-    g.message = txt
-    g.msgs = message 
-    return render_template('message.html', message=message, length = g.length)
+    g.msg = txt
+    g.sub = sub
+    g.msgs = message
+    print(g.timestamp) 
+    return render_template('SendMessage.html', message=message, length = g.length, allow_edit = check_edit_permission(g.timestamp), edit = edit, star = star, letter = g.letter, email = g.c, view = viewed)
+
+#retrieving full message based on id
+@app.route('/message/<int:message_id>')
+def message(message_id):
+    # Fetch the selected message from the database 
+    g.msgId = message_id
+    cursor = con.cursor()
+    cursor.execute("SELECT subject, text, sender, receiver, timestamp_value, kys, name, image_data, star, edit, viewed FROM admin2 WHERE id = %s", (message_id,))
+    message = cursor.fetchone()
+    print(message)
+    message = list(message)
+    g.timestamp = message[4]
+    name = message[6]
+    image_data = message[7]
+    edit = message[9]
+    star = message[8]
+    viewed = message[10]
+    print(g.mail)
+    if message[3] == g.mail:
+        viewed = 1
+        mySql_insert_query = "update admin2 set viewed = 1 where id = '{}'".format(g.msgId)
+        cursor = con.cursor()
+        cursor.execute(mySql_insert_query)
+        con.commit()
+
+    image_dir = 'static'
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+    key = message[5]
+    g.kys = key
+    sub = ''
+    txt = ''
+    subjectDecrypt = message[0].split()
+    textDecrypt = message[1].split()
+    k = key
+    for i in subjectDecrypt:
+        for j in i:
+            try:
+                sub += chr((k.index(j) + 65))
+            except:
+                sub += j
+        sub += ' '
+    for i in textDecrypt:
+        for j in i:
+            try:
+                txt += chr((k.index(j) + 65))
+            except:
+                txt += j
+        txt += ' '
+    a4 = ''
+    if image_data != '' and name != '':
+        image_path = os.path.join(image_dir, name)
+        with open(image_path, 'wb') as img_file:
+            img_file.write(image_data)
+            
+        a4 = name
+        
+    message[0] = sub 
+    message[1] = txt
+    message[6] = a4
+    print(message[:len(message) - 1])
+    g.msg = txt
+    g.sub = sub
+    g.msgs = message
+    print(g.timestamp) 
+    return render_template('message.html', message=message, length = g.length, allow_edit = check_edit_permission(g.timestamp), edit = edit, star = star, letter = g.letter, email = g.c, view = viewed)
+
+@app.route('/allowEdit')
+def allowEdit():
+    return render_template('edit.html', length = g.length, message = g.msg, subject = g.sub, letter = g.letter, email = g.c)
+
+@app.route('/afterEditing', methods = ['POST'])
+def afterEditing():
+    con = c1234.connect(host="localhost", user="root",
+                        passwd="hari@9RUSHI", database="vmail")
+    cursor = con.cursor()
+    messag = request.form['message']
+    subject = request.form['subject']
+    subject = grammarCorrection(subject)
+    messag = grammarCorrection(messag)
+    spam = spam_filter(messag)
+    subject = subject.upper()
+    messag = messag.upper()
+    hm = {}
+    key = ''
+    alpha = [i for i in range(26)]
+    for i in range(26):
+        x = random.randint(0, len(alpha) - 1)
+        x = alpha[x]
+        hm[chr(i + ord('A'))] = chr(x + ord('A'))
+        key += chr(x + ord('A'))
+        alpha.remove(x)
+    subject.upper()
+    messag.upper()
+    subject = subject.split()
+    encryptedSub = ''
+    for i in subject:
+        for j in i: 
+            if j in key:
+                encryptedSub += hm[j]
+            else:
+                encryptedSub += j
+
+        encryptedSub += " "
+    encryptedMessage = ''
+    messag = messag.split()
+    for i in messag:
+        for j in i:
+            try:
+                encryptedMessage += hm[j]
+            except:
+                encryptedMessage += j
+        encryptedMessage += " "
+    update_query = """
+    UPDATE admin2
+    SET subject = %s,
+        text = %s,
+        kys = %s,
+        spam = %s,
+        edit = %s
+    WHERE id = %s
+    """
+    edit = 1
+    cursor.execute(update_query, (encryptedSub, encryptedMessage, key, spam, edit, g.msgId))
+    con.commit()
+    cursor.close()
+    con.close()
+    return message(g.msgId)
+
+
 
 #moving message to bin
 @app.route('/moveToBin')
@@ -1049,7 +1276,7 @@ def moveToBin():
 #moving message to star
 @app.route('/moveToStar')
 def moveToStar():
-    print("HI................................................................")
+   # print("HI................................................................")
     cursor = con.cursor()
     binary = 1
     cursor.execute("SELECT star FROM admin2 WHERE id = '{}'".format(g.msgId))
@@ -1074,9 +1301,9 @@ def text_to_speech(text, language='en', output_file='static/output.mp3'):
 @app.route('/convert', methods=['POST'])
 def convert():
     if request.method == 'POST':
-        text = g.message
+        text = g.msg
         output_file = text_to_speech(text)
-        return render_template('message.html', message=g.msgs, length = g.length, audio_file=output_file)
+        return render_template('message.html', message=g.msgs, length = g.length, audio_file=output_file, letter = g.letter, email = g.c)
 
 @app.route('/Registration')
 def Registration():
@@ -1088,7 +1315,6 @@ def otp():
     otp = request.form['otp']
     print(otp, g.otp)
     if otp == g.otp:
-        ''
         cursor = con.cursor()
         registration_sucessful(g.regEmail)
         mySql_insert_query = "INSERT INTO logindetails VALUES ('{}', '{}', '{}', '{}')".format(
@@ -1098,6 +1324,23 @@ def otp():
         con.commit()
         return render_template('RegistrationSucess.html')
     return render_template('invalidOtp.html')
+
+@app.route('/forgetOtp', methods=['POST'])
+def forgetOtp():
+    otp = request.form['otp']
+    print(otp, g.otp)
+    if otp == g.otp:
+        return render_template('forgetPasswordEnter.html')
+    return render_template('invalidOtp.html')
+
+@app.route('/forgetPasswordEnter', methods=['POST'])
+def forgetPasswordEnter():
+    password = request.form['password']
+    mySql_insert_query = "update logindetails set password = '{}' where email = '{}'".format(password, g.forgotMail)
+    cursor = con.cursor()
+    cursor.execute(mySql_insert_query)
+    con.commit()
+    return render_template('passwordUpdate.html')
 
 #registering user
 @app.route('/registerUser', methods=['POST'])
@@ -1168,7 +1411,7 @@ def email():
     subject = subject.split()
     encryptedSub = ''
     for i in subject:
-        for j in i:
+        for j in i: 
             if j in key:
                 encryptedSub += hm[j]
             else:
@@ -1191,8 +1434,16 @@ def email():
         image_name = image.filename
     bin = 0
     star = 0
-    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data, spam, bin, star) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data, spam, bin, star)
+    edit = 0
+    viewed = 0
+    query = "select * from blockedusers where receiver = '{}' and sender = '{}' ".format(reciever, sender)
+    cursor = con.cursor()
+    cursor.execute(query)
+    records = cursor.fetchall()
+    if len(records) >= 1:
+        spam = 1
+    mySql_insert_query = "INSERT INTO admin2 (sender, subject, text, kys, receiver, name, image_data, spam, bin, star, edit, viewed) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (sender, encryptedSub, encryptedMessage, key, reciever, image_name, image_data, spam, bin, star, edit, viewed)
 
     cursor = con.cursor()
     cursor.execute(mySql_insert_query, values)
@@ -1201,6 +1452,45 @@ def email():
 
     return render_template('login.html')
    
+
+@app.route('/ForgetPassword')
+def ForgetPassword():
+    return render_template('forgetPasswordMail.html')
+
+def sendOtpForgetPasswordMail(reciever):
+    sender_email = '20b01a05c6@svecw.edu.in'
+    sender_password = 'hari@9RUSHI'  # Your email account password
+    recipient_email = reciever
+    smtp_server = 'smtp.gmail.com'  # SMTP server for Gmail
+    # Create an email message
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = recipient_email
+    message['Subject'] = "Vmail : To Update Your Password" 
+    otp = ''
+    for i in range(6):
+        otp += str(random.randint(1, 9))
+    g.otp = otp
+    body = "Please use this otp to complete update your password   " + g.otp
+    message.attach(MIMEText(body, 'plain'))
+    try:
+        server = smtplib.SMTP(smtp_server, 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, recipient_email, text)
+        server.quit()
+        print("Email sent successfully!")
+    except Exception as e:
+        return render_template('error_page.html',  error_message="An error occured" + str(e))
+
+
+@app.route('/ForgotMail', methods = ['POST'])
+def ForgotMail():
+    mail = request.form['mail']
+    sendOtpForgetPasswordMail(mail)
+    g.forgotMail = mail
+    return render_template('forgotOtp.html')
 
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
@@ -1280,7 +1570,7 @@ def SendMail():
     total_emails = cursor.fetchall()
     g.lengths = len(total_emails)
     has_next_page = offset + emails_per_page < len(total_emails)
-    return render_template('sentMail.html', messages=messages, length = g.length, length1 = g.length, page_number=page_number, has_next_page=has_next_page)
+    return render_template('sentMail.html', messages=messages, length = g.length, length1 = g.length, page_number=page_number, has_next_page=has_next_page, letter = g.letter, email = g.c)
 
 
 @app.route('/RecievedMail')
@@ -1417,6 +1707,28 @@ def RecievedMail():
     main(contents, filename)
     webbrowser.open(filename)
     return render_template('demo3.html')
+
+
+
+tool = language_tool_python.LanguageTool('en-US')
+
+def get_matched_word(text, offset, length):
+    return text[offset:offset + length]
+
+@app.route('/check', methods=['POST'])
+def check_text():
+    data = request.get_json()
+    text = data['text']
+
+    # Perform error and grammar checking
+    matches = tool.check(text)
+
+    suggestions = [{'type': 'red' if match.category == 'TYPO' else 'blue',
+                    'suggestion': match.replacements[0] if match.replacements else match.message,
+                    'word': get_matched_word(text, match.offset, match.errorLength)}
+                   for match in matches]
+
+    return jsonify(suggestions)
 
 app.secret_key = 'secret123'
 app.run(debug=True)

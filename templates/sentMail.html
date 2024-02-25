@@ -20,7 +20,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  </head>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 
@@ -521,6 +520,79 @@ ul li:last-child {
   margin-top: auto;
 }
 
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.star {
+      color: inherit; /* Set the initial color */
+    }
+
+    .star.yellow {
+      color: rgb(43, 0, 255); /* Set the color for 'star' class with 'yellow' class */
+    }
+
+    .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.dropbtn {
+    background-color: white;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    border: 2px solid black; 
+    border-radius: 50%; 
+    width: 40px; 
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #f1f1f1; /* Change hover background color */
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu */
+.show {
+    display: block;
+}
+
   </style>
   </head>
   <body>
@@ -528,7 +600,6 @@ ul li:last-child {
       <header class="header">
         <div class="left-area flex">
           <div class="menu hover">
-           
           </div>
           <img src="{{url_for('static', filename='googlelogo.png')}}" alt="logo" style="height:50px;width:80px" />
         </div>
@@ -536,15 +607,28 @@ ul li:last-child {
           
           <div class="search">
             <ion-icon name="search-outline" class="hover"></ion-icon>
-            <form action="/SentSearch" method="post">
+            <form action="/search" method="post">
               <input type="text" name="search" placeholder="Search...">
               <button type="submit"></button>
             </form>
           </div>
         </div>
         <div class="right-area flex">
-          
+        <!--  <ion-icon name="help-circle-outline" class="hover"></ion-icon>
+          <ion-icon name="settings-outline" class="hover"></ion-icon>
+          <ion-icon name="apps" class="hover"></ion-icon>
+          -->
           <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <div class="icon-container">
+            <div class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn">{{ letter }}</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#">{{ email }}</a>
+                    <a href="{{ url_for('login') }}">Sign Out</a>
+                </div>
+            </div>
+        </div>
         </div>
       </header>
       <nav>
@@ -586,6 +670,11 @@ ul li:last-child {
                   Bin
                 </a>
               </li>
+              <li>
+                <a href = "{{url_for('Blocked')}}">
+                  <ion-icon class = "glyphicon glyphicon-ban-circle"></ion-icon>
+                   Blocked Mails
+              </a>
              
             </ul>
           </div>
@@ -627,7 +716,7 @@ ul li:last-child {
             </div>
             
             <div class="messages_content">
-              <a href="{{ url_for('message', message_id=messag[0]) }}">
+              <a href="{{ url_for('SentMessage', message_id=messag[0]) }}">
                 {{ messag[1] }} : {{ messag[2] }}
               
             </div>
@@ -646,5 +735,23 @@ ul li:last-child {
         </div>
       </aside>
     </section>
+    <script>
+       function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
   </body>
 </html>

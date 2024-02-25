@@ -201,9 +201,7 @@ input[type="submit"]:hover{
 
         <label>Password</label>
       </div>
-        <div class="iconeye">
-      <img src="{{url_for('static', filename='eyehide.png')}}" onclick="show();" id="eye">
-      </div>
+
       <a class="line3">Use 8 or more characters with a mix of letters, numbers & symbols</a>
       <br>
       <a href="{{ url_for('login') }}"  class="line4">Sign in instead</a>
@@ -218,7 +216,7 @@ input[type="submit"]:hover{
             var email = document.getElementById("email").value;
             var phone = document.getElementById("phone").value;
             var reg1 = /^[a-zA-Z0-9]{6,}$/;
-            var reg2 = /^[a-zA-Z0-9]{6,}$/;
+            var reg2 = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;  
             var reg3 = 	
 /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                var reg4 = /^[789]{1}[0-9]{9}$/;
@@ -247,7 +245,7 @@ input[type="submit"]:hover{
                 document.getElementById("pwderror").innerHTML = "";
                }
                else{
-                document.getElementById("pwderror").innerHTML = "Invalid Password";
+                document.getElementById("pwderror").innerHTML = "Password is not Compliant. It must contain at least 8 characters with at least one lowercase alphabet, one uppercase alphabet, one numeric digit and one symbol from #?!@.$%&*";
                 return false;
                }
                // All validations passed, show success message

@@ -533,6 +533,66 @@ ul li:last-child {
       color: rgb(43, 0, 255); /* Set the color for 'star' class with 'yellow' class */
     }
 
+    .icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.dropbtn {
+    background-color: white;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    border: 2px solid black; 
+    border-radius: 50%; 
+    width: 40px; 
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #f1f1f1; /* Change hover background color */
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu */
+.show {
+    display: block;
+}
+
   </style>
   </head>
   <body>
@@ -559,6 +619,16 @@ ul li:last-child {
           <ion-icon name="apps" class="hover"></ion-icon>
           -->
           <img src="{{url_for('static', filename='voice-mail.png')}}" alt="user-photo" />
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <div class="icon-container">
+            <div class="dropdown">
+                <button onclick="toggleDropdown()" class="dropbtn">{{ letter }}</button>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#">{{ email }}</a>
+                    <a href="{{ url_for('login') }}">Sign Out</a>
+                </div>
+            </div>
+        </div>
         </div>
       </header>
       <nav>
@@ -587,6 +657,12 @@ ul li:last-child {
                   <ion-icon name="send-outline"></ion-icon>
                   Sent
                 </a>
+              </li>
+              <li>
+                <a href = "{{url_for('Blocked')}}">
+                  <ion-icon class = "glyphicon glyphicon-ban-circle"></ion-icon>
+                   Blocked Mails
+              </a>
               </li>
               <li>
                 <a href="{{ url_for('Star') }}">
@@ -660,39 +736,37 @@ ul li:last-child {
         {% endfor %}
     </ul>
 -->
-        <div class="messages_area">
-          {% for messag in messages %}
-           <div class="messages">
-            <div class="messages_left">
+<div class="messages_area">
+  {% for messag in messages %}
+      <div class="messages">
+          <div class="messages_left">
               <div class="check check_2">
-                <img src="./img/checkbox.png" alt="" />
-                <span> <ion-icon name="checkmark"></ion-icon> </span>
+                  <img src="./img/checkbox.png" alt="" />
+                  <span> <ion-icon name="checkmark"></ion-icon> </span>
               </div>
               <ion-icon name="star-outline" class="hover star{% if messag[-1] == 1 %} yellow{% endif %}"></ion-icon>
-              <span>{{ messag[3].split('@')[0]}}</span>
-            </div>
-            
-            <div class="messages_content">
-              <a href="{{ url_for('message', message_id=messag[0]) }}">
-                {{ messag[1] }} : {{ messag[2] }}
-              
-            </div>
-            <div class="messages_date">{{ messag[4] }}</div>
-          </div> 
-          {% endfor %}
-            </div>
-            <div class="pagination">
-              {% if page_number > 1 %}
-                <a href="/ValidateUser?page={{ page_number - 1 }}">&#9665; Previous</a>
-              {% endif %}
-            
-              {% if has_next_page %}
-                <a href="/ValidateUser?page={{ page_number + 1 }}">Next &#9655;</a>
-              {% endif %}
-            </div>
+              <span>{% if messag[-1] == 0 %}<strong>{{ messag[3].split('@')[0] }}</strong>{% else %}{{ messag[3].split('@')[0] }}{% endif %}</span>
+          </div>
 
-        </div>
-      </main>
+          <div class="messages_content">
+              <a href="{{ url_for('message', message_id=messag[0]) }}">
+                  {% if messag[-1] == 0 %}<strong>{{ messag[1] }} : {{ messag[2] }}</strong>{% else %}{{ messag[1] }} : {{ messag[2] }}{% endif %}
+              </a>
+          </div>
+          <div class="messages_date">{% if messag[-1] == 0 %}<strong>{{ messag[4] }}</strong>{% else %}{{ messag[4] }}{% endif %}</div>
+      </div>
+  {% endfor %}
+</div>
+<div class="pagination">
+  {% if page_number > 1 %}
+      <a href="/ValidateUser?page={{ page_number - 1 }}">&#9665; Previous</a>
+  {% endif %}
+
+  {% if has_next_page %}
+      <a href="/ValidateUser?page={{ page_number + 1 }}">Next &#9655;</a>
+  {% endif %}
+</div>
+</main>
       <aside>
         <div class="aside_icons">
     
@@ -705,5 +779,23 @@ ul li:last-child {
         </div>
       </aside>
     </section>
+    <script>
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
   </body>
 </html>
